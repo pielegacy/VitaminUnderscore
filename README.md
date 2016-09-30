@@ -13,3 +13,9 @@ in the main directory of the src code and typing:
 If you'd just like to build the .dll files use :
 
 `dotnet build`
+
+## Features
+Currently the game includes: 
+- Formulation Creation through combining Vitamins, Minerals and other substances into one.
+- Loading and Saving using an accessible JSON system
+- Basic Testing on subjects
