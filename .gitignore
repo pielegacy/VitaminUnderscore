@@ -1,0 +1,10 @@
+bin
+obj
+SaveData
+SaveDataBackup
+implemenationchecklist.md
+*.docx
+*.txt
+*.png
+*.uxf
+*.pdf
