@@ -15,15 +15,22 @@ namespace VitaminUnderscore
         */
         private const string EffectsRepo = @"http://api.myjson.com/bins/2sd7s";
         private const string IngredientsRepo = @"https://api.myjson.com/bins/2b7xk";
+        // Every new game is a fresh save
+        private const bool newGameDefault = true;
         // Adds individual ingredients
         public GameRegistry()
         {
-
+            if (newGameDefault && Directory.Exists("SaveData")){
+                List<string> fileNames = Directory.EnumerateFiles("SaveData").ToList();
+                fileNames.ForEach(f => File.Delete(f));
+                Directory.Delete("SaveData");
+            }
         }
         public List<Ingredient> Ingredients = new List<Ingredient>();
         public List<Effect> Effects = new List<Effect>(){
         };
         public List<Formulation> CreatedFormulations = new List<Formulation>();
+        public List<Animal> Subjects = new List<Animal>();
         public List<Effect> RetEffects(string[] names)
         {
             List<Effect> results = new List<Effect>();
@@ -51,6 +58,8 @@ namespace VitaminUnderscore
             File.WriteAllText("SaveData/effects.json", JsonConvert.SerializeObject(Effects));
             if (CreatedFormulations.Count > 0)
                 File.WriteAllText("SaveData/formulations.json", JsonConvert.SerializeObject(CreatedFormulations));
+            if (Subjects.Count > 0)
+                File.WriteAllText("SaveData/subjects.json", JsonConvert.SerializeObject(Subjects));
         }
         public async void JsonLoad(bool verbose = false)
         {
@@ -62,6 +71,8 @@ namespace VitaminUnderscore
                 Effects = JsonConvert.DeserializeObject<List<Effect>>(File.ReadAllText("SaveData/effects.json"));
                 if (File.Exists("SaveData/formulations.json"))
                     CreatedFormulations = JsonConvert.DeserializeObject<List<Formulation>>(File.ReadAllText("SaveData/formulations.json"));
+                if (File.Exists("SaveData/subjects.json"))
+                    Subjects = JsonConvert.DeserializeObject<List<Animal>>(File.ReadAllText("SaveData/subjects.json"));
                 if (verbose)
                     Dialog.MessageDone();
             }

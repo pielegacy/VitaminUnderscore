@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace VitaminUnderscore
 {
@@ -87,6 +90,7 @@ namespace VitaminUnderscore
             {
                 Formulation formula = consumable as Formulation;
                 formula.Ingredients.ForEach(i => {
+                    AllergicReaction(i);
                     i.Effects.ForEach(e => {
                         Attributes[e.Trait] += e.Amount;
                     });
@@ -98,6 +102,17 @@ namespace VitaminUnderscore
                     Attributes[e.Trait] += e.Amount;
                 });
             }
+        }
+        // Handle allergies
+        protected virtual bool AllergicReaction(Ingredient substance)
+        {
+            bool res = false;
+            if (Allergies.Contains(substance))
+            {
+                Dialog.WarningMessage($"It appears that {Name} is having an allergic reaction to {substance.Name}");
+                res = true;
+            }
+            return res;
         }
     }
     /*
@@ -114,11 +129,55 @@ namespace VitaminUnderscore
         public Subject(string name, int age, Formulation drug) : this (name, age, "a poor human", GenerateAttributes(), drug)
         {
         }
+        public Subject(Formulation drug) : this (GetRandomName().Result, GetRandomAge(), "A poor test subject", GenerateAttributes(), drug)
+        {
+            
+        }
+        private List<string> _notes = new List<string>();
+        private void AddNote(string note)
+        {
+            if (!_notes.Contains(note))
+                _notes.Add(note);
+        }
         private Formulation _assignedFormulation;
         public Formulation AssignedFormulation
         {
             get { return _assignedFormulation;}
             set { _assignedFormulation = value;}
+        }
+        protected override bool AllergicReaction(Ingredient substance)
+        {
+            bool res = base.AllergicReaction(substance);
+            if (res == true)
+                _notes.Add($"Had a severe reaction to {substance.Name}");
+            return res;            
+        }
+        // Create a random name using the namey name database
+        // Can't figure out how to get a surname from the database so I chuck
+        // a random suffix on the end
+        static async Task<string> GetRandomName()
+        {
+            Random rand = new Random();
+            List<string> surnameSuffixes = new List<string>()
+            {
+                "son",
+                "vic",
+                "ton",
+                "en",
+                "er",
+                "ly",
+                "ge",
+                "and"
+            };
+            using (HttpClient web  = new HttpClient())
+            {
+                return JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + " " + JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
+            }
+        }
+        static int GetRandomAge()
+        {
+            Random rand = new Random();
+            return rand.Next(18, 100);
         }
     }
 }

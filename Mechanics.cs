@@ -54,6 +54,11 @@ namespace VitaminUnderscore
                 Effect described = obj as Effect;
                 Console.WriteLine($"-- {described.Name} --\nTrait: {described.Trait}\nMagnitude: {described.Amount}");
             }
+            if (obj.GetType() == typeof(Subject))
+            {
+                Subject described = obj as Subject;
+                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Age}");
+            }
         }
         // Main Menu Dialog Option
         public static bool MainMenu(GameRegistry reg, bool firstTime = false)
@@ -80,6 +85,15 @@ namespace VitaminUnderscore
                     Console.Clear();
                     Dialog.ColouredMessage("-- Your Forumalae --", ConsoleColor.Cyan);
                     reg.CreatedFormulations.ForEach(f => Describe(f));
+                    Console.ReadKey();
+                break;
+                case "3":
+                    reg.Subjects.Add(CreateSubject(reg));
+                break;
+                case "4":
+                    Console.Clear();
+                    Dialog.ColouredMessage("-- Subjects --", ConsoleColor.Yellow);
+                    reg.Subjects.ForEach(s => Describe(s));
                     Console.ReadKey();
                 break;
                 case "0":
@@ -115,6 +129,8 @@ namespace VitaminUnderscore
         {
             "1) Create New Formulation",
             "2) View Formulations",
+            "3) Recruit New Subject",
+            "4) View Subjects",
             //"420) Enter Dev Mode",
             "99) View This Menu",
             "0) Close Game",
@@ -166,6 +182,40 @@ namespace VitaminUnderscore
                 complete = choice.ToLower() == "y";
             }
             return newForm;
+        }
+        // Add Test Subject
+        public static Subject CreateSubject(GameRegistry reg)
+        {
+            Subject newSubject = null;
+            if (reg.CreatedFormulations.Count == 0)
+            {
+                Console.WriteLine("No formulations available, press any key to create one.");
+                Console.ReadKey();
+                reg.CreatedFormulations.Add(CreateFormulation(reg));
+            }
+            bool complete = false;
+            while (!complete)
+            {
+                Console.Clear();
+                ColouredMessage("-- HR Department Subject Selector v1.2 --\nSelect Testing Formulation:", ConsoleColor.Green);
+                reg.CreatedFormulations.ForEach(i => Console.WriteLine(i.Name));
+                string form = "";
+                Formulation formulation = null;
+                while (formulation == null)
+                {
+                    form = Console.ReadLine();
+                    formulation = reg.CreatedFormulations.Find(f => f.Name.ToLower() == form.ToLower());
+                }                
+                // Formulation formulation = reg.CreatedFormulations.Find(f => f.Name == form);
+                newSubject = new Subject(formulation);
+                Describe(newSubject);
+                Console.WriteLine("Is this correct? y/n");                
+                string choice = "";
+                while (choice.ToLower() != "y" && choice.ToLower() != "n")
+                    choice = Console.ReadLine();
+                complete = choice.ToLower() == "y";
+            }
+            return newSubject;
         }
     }
 }
