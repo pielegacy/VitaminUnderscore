@@ -66,12 +66,13 @@ namespace VitaminUnderscore
                     effectName = Console.ReadLine();
                 }
                 effects = reg.RetEffects(effectNames.ToArray());
+                effects.RemoveAll(e => e.Name == "");
                 Dialog.HelpMessage("Is this a 1) Vitamin 2) Mineral 3) Other ?");
-                IngredientType type = (IngredientType)Convert.ToInt32(Console.ReadLine() as string);
+                IngredientType type = (IngredientType)Convert.ToInt32(Console.ReadLine() as string) - 1;
                 result = new Ingredient(name, type, effects);
                 Dialog.Describe(result);
                 Console.WriteLine("Is this correct? y/n");
-                string check = "";
+                string check = "--";
                 while (check.ToLower() != "y" && check.ToLower() != "n")
                     check = Console.ReadLine();
                 complete = check.ToLower() == "y";

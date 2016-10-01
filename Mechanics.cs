@@ -57,7 +57,7 @@ namespace VitaminUnderscore
             if (obj.GetType() == typeof(Subject))
             {
                 Subject described = obj as Subject;
-                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Age}");
+                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Age}\nAssigned Formulation : {described.AssignedFormulation.Name}");
             }
         }
         // Main Menu Dialog Option
@@ -112,14 +112,17 @@ namespace VitaminUnderscore
                 break;
                 // Developer Specific Commands
                 case "dev_effect_add":
+                case "#dea":                
                     if (DevMode)
                         DeveloperDialog.AddEffect(reg);
                 break;
                 case "dev_ingredient_add":
+                case "#dia":                
                     if (DevMode)
                         DeveloperDialog.AddIngredient(reg);
                 break;
                 case "dev_list":
+                case "#dl":
                     DeveloperDialog.MonitorList(reg,commandString.Split(' ')[1].ToLower());
                 break;
                 default:
@@ -174,7 +177,7 @@ namespace VitaminUnderscore
                 while (currentType != "1" && currentType != "2" && currentType != "3")
                     currentType = Console.ReadLine();
                 IngredientType type = IngredientType.Other;
-                type = (IngredientType)Convert.ToInt16(currentType);
+                type = (IngredientType)Convert.ToInt16(currentType) - 1;
                 newForm = new Formulation(name, ingredients, type);
                 Describe(newForm);
                 Console.WriteLine("Is this correct? y/n");

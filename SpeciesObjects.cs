@@ -122,6 +122,7 @@ namespace VitaminUnderscore
     */
     public class Subject  : Human
     {
+        [JsonConstructorAttribute]
         public Subject(string name, int age, string bio, Dictionary<Trait, int> attributes, Formulation drug) : base (name, age, bio, attributes, new List<Ingredient>())
         {
             _assignedFormulation = drug;

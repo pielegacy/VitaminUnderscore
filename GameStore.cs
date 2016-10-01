@@ -14,7 +14,7 @@ namespace VitaminUnderscore
             Default Configurations for the JSON files
         */
         private const string EffectsRepo = @"http://api.myjson.com/bins/2sd7s";
-        private const string IngredientsRepo = @"https://api.myjson.com/bins/2b7xk";
+        private const string IngredientsRepo = @"https://api.myjson.com/bins/4dgrs";
         // Every new game is a fresh save
         private const bool newGameDefault = false;
         // Adds individual ingredients
@@ -30,12 +30,13 @@ namespace VitaminUnderscore
         public List<Effect> Effects = new List<Effect>(){
         };
         public List<Formulation> CreatedFormulations = new List<Formulation>();
-        public List<Animal> Subjects = new List<Animal>();
+        public List<Subject> Subjects = new List<Subject>();
         public List<Effect> RetEffects(string[] names)
         {
             List<Effect> results = new List<Effect>();
             for (int i = 0; i < names.Length; i++)
-                results.Add(Effects.Find(e => e.Name.ToLower() == names[i].ToLower()));
+                if (Effects.Find(e => e.Name.ToLower() == names[i].ToLower()) != null)
+                    results.Add(Effects.Find(e => e.Name.ToLower() == names[i].ToLower()));
             return results;
         }
         public Ingredient RetIngredient(string name)
@@ -72,7 +73,7 @@ namespace VitaminUnderscore
                 if (File.Exists("SaveData/formulations.json"))
                     CreatedFormulations = JsonConvert.DeserializeObject<List<Formulation>>(File.ReadAllText("SaveData/formulations.json"));
                 if (File.Exists("SaveData/subjects.json"))
-                    Subjects = JsonConvert.DeserializeObject<List<Animal>>(File.ReadAllText("SaveData/subjects.json"));
+                    Subjects = JsonConvert.DeserializeObject<List<Subject>>(File.ReadAllText("SaveData/subjects.json"));
                 if (verbose)
                     Dialog.MessageDone();
                 if (Ingredients.Count == 0 || Effects.Count == 0)
