@@ -10,13 +10,11 @@ namespace VitaminUnderscore
 {
     public class Program
     {
-        public static IngredientsRegistry reg = new IngredientsRegistry();            
+        public static GameRegistry reg = new GameRegistry();            
         
         public static void Main(string[] args)
         {
             Console.Title = "Vitamin _"; 
-            reg.JsonLoad(true);
-            reg.JsonSave();
             while (Dialog.MainMenu(reg) == false)
                 Console.Clear();
         }

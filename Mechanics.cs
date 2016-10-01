@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace VitaminUnderscore
 {
@@ -9,6 +10,7 @@ namespace VitaminUnderscore
     */
     public static class Dialog
     {
+        public const bool DevMode = true;        
         public static void MessageLoad()
         {
             Console.WriteLine("Loading...");
@@ -54,20 +56,22 @@ namespace VitaminUnderscore
             }
         }
         // Main Menu Dialog Option
-        public static bool MainMenu(IngredientsRegistry reg, bool firstTime = false)
+        public static bool MainMenu(GameRegistry reg, bool firstTime = false)
         {
             Console.Clear();
             bool exit = false;
             ColouredMessage("-- VitaSys Alternative Medicine OS --\nWhat would you like to do today?", ConsoleColor.Yellow);
-            if (firstTime)
+            if (Directory.Exists("SaveData") == false)
             {
                 Dialog.ColouredMessage("Loading First Time Startup...", ConsoleColor.Cyan);
+                reg.JsonLoad();
                 System.Threading.Thread.Sleep(10);
+                reg.JsonSave();
                 Dialog.ColouredMessage("Loaded!", ConsoleColor.Green);
             }
             HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
             string commandString = Console.ReadLine();
-            switch (commandString.Split(' ')[0])
+            switch (commandString.Split(' ')[0].ToLower())
             {
                 case "1":
                     reg.CreatedFormulations.Add(CreateFormulation(reg));
@@ -79,7 +83,8 @@ namespace VitaminUnderscore
                     Console.ReadKey();
                 break;
                 case "0":
-                    Console.WriteLine("Shutting down...");
+                    Console.WriteLine("Saving & Shutting down...");
+                    reg.JsonSave();
                     exit = true;
                 break;
                 case "100":
@@ -88,6 +93,18 @@ namespace VitaminUnderscore
                 break;
                 case "101":
                     reg.JsonLoad();
+                break;
+                // Developer Specific Commands
+                case "dev_effect_add":
+                    if (DevMode)
+                        DeveloperDialog.AddEffect(reg);
+                break;
+                case "dev_ingredient_add":
+                    if (DevMode)
+                        DeveloperDialog.AddIngredient(reg);
+                break;
+                case "dev_list":
+                    DeveloperDialog.MonitorList(reg,commandString.Split(' ')[1].ToLower());
                 break;
                 default:
                 break;
@@ -105,7 +122,7 @@ namespace VitaminUnderscore
             "101) Load Game"
         };
         // Create a formulation from the command line
-        public static Formulation CreateFormulation(IngredientsRegistry reg)
+        public static Formulation CreateFormulation(GameRegistry reg)
         {
             Formulation newForm = null;
             bool complete = false;
@@ -139,15 +156,7 @@ namespace VitaminUnderscore
                 while (currentType != "1" && currentType != "2" && currentType != "3")
                     currentType = Console.ReadLine();
                 IngredientType type = IngredientType.Other;
-                switch (Convert.ToInt16(currentType))
-                {
-                    case 1:
-                        type = IngredientType.Vitamin;
-                        break;
-                    case 2:
-                        type = IngredientType.Mineral;
-                        break;
-                }
+                type = (IngredientType)Convert.ToInt16(currentType);
                 newForm = new Formulation(name, ingredients, type);
                 Describe(newForm);
                 Console.WriteLine("Is this correct? y/n");

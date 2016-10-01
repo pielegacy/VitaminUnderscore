@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VitaminUnderscore
 {
-    public class IngredientsRegistry
+    public class GameRegistry
     {
         /*
             Default Configurations for the JSON files
@@ -16,7 +16,7 @@ namespace VitaminUnderscore
         private const string EffectsRepo = @"http://api.myjson.com/bins/2sd7s";
         private const string IngredientsRepo = @"https://api.myjson.com/bins/2b7xk";
         // Adds individual ingredients
-        public IngredientsRegistry()
+        public GameRegistry()
         {
 
         }
@@ -49,7 +49,7 @@ namespace VitaminUnderscore
                 Directory.CreateDirectory("SaveData");
             File.WriteAllText("SaveData/ingredients.json", JsonConvert.SerializeObject(Ingredients));
             File.WriteAllText("SaveData/effects.json", JsonConvert.SerializeObject(Effects));
-            if (CreatedFormulations.Count() > 0)
+            if (CreatedFormulations.Count > 0)
                 File.WriteAllText("SaveData/formulations.json", JsonConvert.SerializeObject(CreatedFormulations));
         }
         public async void JsonLoad(bool verbose = false)
@@ -59,7 +59,7 @@ namespace VitaminUnderscore
                 if (verbose)
                     Dialog.MessageLoad();
                 Ingredients = JsonConvert.DeserializeObject<List<Ingredient>>(File.ReadAllText("SaveData/ingredients.json"));
-                Effects = JsonConvert.DeserializeObject<List<Effect>>(File.ReadAllText("SaveData/ingredients.json"));
+                Effects = JsonConvert.DeserializeObject<List<Effect>>(File.ReadAllText("SaveData/effects.json"));
                 if (File.Exists("SaveData/formulations.json"))
                     CreatedFormulations = JsonConvert.DeserializeObject<List<Formulation>>(File.ReadAllText("SaveData/formulations.json"));
                 if (verbose)
