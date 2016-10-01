@@ -74,6 +74,8 @@ namespace VitaminUnderscore
                 reg.JsonSave();
                 Dialog.ColouredMessage("Loaded!", ConsoleColor.Green);
             }
+            else
+                reg.JsonLoad();
             HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
             string commandString = Console.ReadLine();
             switch (commandString.Split(' ')[0].ToLower())

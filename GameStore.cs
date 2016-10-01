@@ -16,7 +16,7 @@ namespace VitaminUnderscore
         private const string EffectsRepo = @"http://api.myjson.com/bins/2sd7s";
         private const string IngredientsRepo = @"https://api.myjson.com/bins/2b7xk";
         // Every new game is a fresh save
-        private const bool newGameDefault = true;
+        private const bool newGameDefault = false;
         // Adds individual ingredients
         public GameRegistry()
         {
@@ -54,6 +54,8 @@ namespace VitaminUnderscore
         {
             if (!Directory.Exists("SaveData"))
                 Directory.CreateDirectory("SaveData");
+            if (Ingredients.Count <= 0 || Effects.Count <= 0)
+                JsonLoad(false, true);
             File.WriteAllText("SaveData/ingredients.json", JsonConvert.SerializeObject(Ingredients));
             File.WriteAllText("SaveData/effects.json", JsonConvert.SerializeObject(Effects));
             if (CreatedFormulations.Count > 0)
@@ -61,12 +63,10 @@ namespace VitaminUnderscore
             if (Subjects.Count > 0)
                 File.WriteAllText("SaveData/subjects.json", JsonConvert.SerializeObject(Subjects));
         }
-        public async void JsonLoad(bool verbose = false)
+        public async void JsonLoad(bool verbose = false, bool forceDownload = false)
         {
-            if (Directory.Exists("SaveData"))
+            if (Directory.Exists("SaveData") && !forceDownload)
             {
-                if (verbose)
-                    Dialog.MessageLoad();
                 Ingredients = JsonConvert.DeserializeObject<List<Ingredient>>(File.ReadAllText("SaveData/ingredients.json"));
                 Effects = JsonConvert.DeserializeObject<List<Effect>>(File.ReadAllText("SaveData/effects.json"));
                 if (File.Exists("SaveData/formulations.json"))
@@ -75,6 +75,8 @@ namespace VitaminUnderscore
                     Subjects = JsonConvert.DeserializeObject<List<Animal>>(File.ReadAllText("SaveData/subjects.json"));
                 if (verbose)
                     Dialog.MessageDone();
+                if (Ingredients.Count == 0 || Effects.Count == 0)
+                    JsonLoad(false, true);
             }
             else // Download default data from the internet if there isn't any 
             {
