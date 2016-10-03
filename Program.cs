@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 /*
     Vitamin _ : a Vitamin Development Simulation
         Created by Alex Billson for Object Oriented Programming

@@ -53,19 +53,19 @@ namespace VitaminUnderscore
             _bio = bio;
             _allergies = allergies;
         }
-        public Human(string name, int age) : this (name, age, "A human", GenerateAttributes(), new List<Ingredient>())
+        public Human(string name, int age) : this(name, age, "A human", GenerateAttributes(), new List<Ingredient>())
         {
         }
         private string _bio;
         public string Biography
         {
-            get { return _bio;}
-            set { _bio = value;}
+            get { return _bio; }
+            set { _bio = value; }
         }
         private readonly List<Ingredient> _allergies;
         public List<Ingredient> Allergies
         {
-            get { return _allergies;}
+            get { return _allergies; }
         }
         public bool AddAllergy(Ingredient allergy)
         {
@@ -74,7 +74,8 @@ namespace VitaminUnderscore
             return !_allergies.Contains(allergy);
         }
         // Generates a random set of attributes
-        public static Dictionary<Trait, int> GenerateAttributes(){
+        public static Dictionary<Trait, int> GenerateAttributes()
+        {
             Random rand = new Random();
             Dictionary<Trait, int> temp = new Dictionary<Trait, int>();
             temp.Add(Trait.BrainPower, rand.Next(1, 11));
@@ -82,26 +83,33 @@ namespace VitaminUnderscore
             temp.Add(Trait.Immunity, rand.Next(1, 11));
             temp.Add(Trait.Strength, rand.Next(1, 11));
             temp.Add(Trait.Wellbeing, rand.Next(1, 11));
-            return temp;                        
+            return temp;
         }
         public override void Consume(IConsumable consumable)
         {
             if (consumable.GetType() == typeof(Formulation)) // Handle formulation
             {
                 Formulation formula = consumable as Formulation;
-                formula.Ingredients.ForEach(i => {
+                formula.Ingredients.ForEach(i =>
+                {
                     AllergicReaction(i);
-                    i.Effects.ForEach(e => {
-                        Attributes[e.Trait] += e.Amount;
+                    i.Effects.ForEach(e =>
+                    {
+                        int og = Attributes[e.Trait];
+                        Attributes[e.Trait] = og + e.Amount;
+                        //Console.WriteLine($"{e.Trait} : {og} -> {Attributes[e.Trait]}");
                     });
                 });
             }
-            else {
+            else
+            {
                 Ingredient Ingredient = consumable as Ingredient;
-                Ingredient.Effects.ForEach(e => {
+                Ingredient.Effects.ForEach(e =>
+                {
                     Attributes[e.Trait] += e.Amount;
                 });
             }
+            ProcessAttributes();
         }
         // Handle allergies
         protected virtual bool AllergicReaction(Ingredient substance)
@@ -114,25 +122,60 @@ namespace VitaminUnderscore
             }
             return res;
         }
+        protected virtual void ProcessAttributes()
+        {
+            Random rand = new Random();
+            int affect = 0;
+            for (int i = 0; i < Attributes.Count; i++)
+            {
+                Trait t = (Trait)i;
+                if (Attributes[t] <= 0)
+                {
+                    Console.WriteLine($"That had a serious impact on {Name}'s {Attributes[t]}");
+                    affect += Attributes[t];
+                }
+            }
+            decimal chance = rand.Next(0, 5) * affect * Math.Floor(Convert.ToDecimal(Age) / rand.Next(1,11));
+            Console.WriteLine($"{chance}");
+            Living = chance > rand.Next(-120, -90);
+        }
     }
-    /*
-        Subject class
-            A subject is a human who has been assigned a formulation
-            and so are more content with taking it
-    */
-    public class Subject  : Human
+
+    ///<summary>
+    ///A subject is a human who has been assigned a formulation
+    ///and so are more content with taking it
+    ///</summary>
+    ///<param name="name">
+    ///The name of the entity
+    ///</param>
+    ///<param name="age">
+    ///The age of the subject, may affect medicine consumption and health
+    ///</param>
+    ///<param name="bio">
+    ///Short description of the subject
+    ///Displayed in their summary
+    ///</param>
+    ///<param name="attributes">
+    ///Attributes are used by the system to
+    ///calculate a subjects weaknesses and such.
+    ///Can be generated using GenerateAttributes()
+    ///</param>
+    ///<param name="drug">
+    ///Their assigned Formulation
+    ///</param>
+    public class Subject : Human
     {
         [JsonConstructorAttribute]
-        public Subject(string name, int age, string bio, Dictionary<Trait, int> attributes, Formulation drug) : base (name, age, bio, attributes, new List<Ingredient>())
+        public Subject(string name, int age, string bio, Dictionary<Trait, int> attributes, Formulation drug) : base(name, age, bio, attributes, new List<Ingredient>())
         {
             _assignedFormulation = drug;
         }
-        public Subject(string name, int age, Formulation drug) : this (name, age, "a poor human", GenerateAttributes(), drug)
+        public Subject(string name, int age, Formulation drug) : this(name, age, "a poor human", GenerateAttributes(), drug)
         {
         }
-        public Subject(Formulation drug) : this (GetRandomName().Result, GetRandomAge(), "A poor test subject", GenerateAttributes(), drug)
+        public Subject(Formulation drug) : this(GetRandomName().Result, GetRandomAge(), "A poor test subject", GenerateAttributes(), drug)
         {
-            
+
         }
         private List<string> _notes = new List<string>();
         private void AddNote(string note)
@@ -143,15 +186,25 @@ namespace VitaminUnderscore
         private Formulation _assignedFormulation;
         public Formulation AssignedFormulation
         {
-            get { return _assignedFormulation;}
-            set { _assignedFormulation = value;}
+            get { return _assignedFormulation; }
+            set { _assignedFormulation = value; }
         }
         protected override bool AllergicReaction(Ingredient substance)
         {
             bool res = base.AllergicReaction(substance);
             if (res == true)
                 _notes.Add($"Had a severe reaction to {substance.Name}");
-            return res;            
+            return res;
+        }
+        /// <summary>
+        /// Checks to see what the possible harm on the subject would be if they took their
+        /// Prescribed Formulation
+        /// </summary>
+        public bool DrugApproval()
+        {
+            Subject projection = this;
+            projection.Consume(AssignedFormulation);
+            return projection.Attributes[Trait.BrainPower] > 0 && projection.Attributes[Trait.Endurance] > 0 && projection.Attributes[Trait.Immunity] > 0 && projection.Attributes[Trait.Strength] > 0 && projection.Attributes[Trait.Wellbeing] > 0;
         }
         // Create a random name using the namey name database
         // Can't figure out how to get a surname from the database so I chuck
@@ -170,7 +223,7 @@ namespace VitaminUnderscore
                 "ge",
                 "and"
             };
-            using (HttpClient web  = new HttpClient())
+            using (HttpClient web = new HttpClient())
             {
                 return JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + " " + JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
             }

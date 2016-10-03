@@ -88,6 +88,7 @@ namespace VitaminUnderscore
                 List<Ingredient> downloadedIngredients = await DownloadIngredients();
                 if (downloadedIngredients != null)
                     Ingredients = downloadedIngredients;
+                
             }
         }
         // Download JSON for default effects list from the internet

@@ -104,5 +104,16 @@ namespace VitaminUnderscore
                 Console.ReadKey();
             }
         }
+        public static void MonitorVitals(GameRegistry reg, int id)
+        {
+            Animal testee = reg.Subjects[id] as Animal;
+            Console.WriteLine($"-- {testee.Name} --");
+            for (int i = 0; i < testee.Attributes.Count; i++)
+            {
+                Trait t = (Trait)i;
+                Console.WriteLine($"{t} : {testee.Attributes[t]}");
+            }
+            Console.ReadKey();
+        }
     }
 }
