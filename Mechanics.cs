@@ -146,6 +146,12 @@ namespace VitaminUnderscore
                     string loc = Console.ReadLine();
                     DeveloperDialog.AddIngredientFromFile(reg, loc);
                 break;
+                case "51":
+                case "#text":
+                    Console.WriteLine("Paste JSON");
+                    string jsonText = Console.ReadLine();
+                    DeveloperDialog.AddIngredientFromText(reg, jsonText);
+                break;
                 case "dev_monitor":
                 case "#dm":
                     DeveloperDialog.MonitorVitals(reg, Int32.Parse(commandString.Split(' ')[1]));
@@ -178,6 +184,7 @@ namespace VitaminUnderscore
             "4) View Subjects",
             "5) Test Formulation",
             "50) Load Ingredient From File",
+            "51) Load Ingredient From Text",            
             "99) View This Menu",
             "0) Close Game",
             "100) Save Game",

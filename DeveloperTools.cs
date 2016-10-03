@@ -124,6 +124,17 @@ namespace VitaminUnderscore
             Console.WriteLine($"{newIngredient.Name} added from file");
             reg.JsonSave();
         }
+        public static void AddIngredientFromText(GameRegistry reg, string json)
+        {
+            Ingredient newIngredient = JsonConvert.DeserializeObject<Ingredient>(json);
+            newIngredient.Effects.ForEach(e => {
+                if (!reg.Effects.Contains(e))
+                    reg.Effects.Add(e);
+            });
+            reg.Ingredients.Add(newIngredient);
+            Console.WriteLine($"{newIngredient.Name} added from file");
+            reg.JsonSave();
+        }
         public static void MonitorVitals(GameRegistry reg, int id)
         {
             Animal testee = reg.Subjects[id] as Animal;
