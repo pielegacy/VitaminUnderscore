@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vitamin _ : Ingredient Generator</title>
+</head>
+
+<body>
+    <h1>Vitamin _ : Ingredient File Generator</h2>
+        <form action="">
+            <h2>Ingredient Details</h2>
+            <label for="Name">Ingredient Name</label>
+            <input type="text" id="Name"><br><br>
+            <label for="Name">Ingredient Type</label>
+            <select name="Type" id="Type">
+            <option value="1">Vitamin</option>
+            <option value="2">Mineral</option>
+            <option value="3">Other</option>
+        </select>
+            <h2>Effects</h2>
+            <label for="EffectName">Effect Name</label>
+            <input type="text" id="EffectName"><br><br>
+            <label for="Trait">Ingredient Trait</label>
+            <select name="Trait" id="Trait">
+            <option value="0">Strength</option>
+            <option value="1">Endurance</option>
+            <option value="2">Immunity</option>
+            <option value="3">BrainPower</option>
+            <option value="4">Wellbeing</option>
+        </select><br>
+            <br>
+            <label for="EffectName">Effect Magnitude</label>
+            <input type="text" id="EffectMagnitude" placeholder="Between -10 and 10 would be great plz"><br>
+            <button type="button" id="AddEffect">Add Effect</button>
+            <br>
+            <label for="Effects">Effects Output</label><br>
+            <textarea name="Effects" id="Effects" cols="20" rows="10"></textarea>
+            <br><br>
+            <button type="button" id="Submit">Generate</button>
+
+        </form><br>
+        <label for="Output">Output</label><br>
+        <textarea name="Output" id="Output" cols="50" rows="20"></textarea>
+        <p>Copy the output and save it as a <code>.json</code> and then run 'Load Ingredient From File' in game</p>
+        <p><i>Or just send the string to Billson</i></p>
+</body>
+<script>
+    let main = () => {
+        document.getElementById("Submit").onclick = generate;
+        document.getElementById("AddEffect").onclick = addEffect;  
+    };
+    let generate = () =>
+    {
+        let outputText = document.getElementById("Output");
+        let name = document.getElementById("Name").value;
+        let type = parseInt(document.getElementById("Type").value);
+        output.Type = type;
+        output.Effects = effects;
+        output.Name = name;
+        outputText.value = JSON.stringify(output);
+        effects = [];
+        output = {};
+    }
+    let addEffect = () =>
+    {
+        let effect = {};
+        effect.Trait = parseInt(document.getElementById("Trait").value);
+        effect.Amount = parseInt(document.getElementById("EffectMagnitude").value);
+        effect.Name = document.getElementById("EffectName").value;
+        effects.push(effect);
+        document.getElementById("Effects").value = JSON.stringify(effects);
+        document.getElementById("EffectMagnitude").value = "";
+        document.getElementById("EffectName").value = "";
+    }
+    let output = {};
+    let effects = [];
+    window.onload = main;
+</script>
+
+</html>
