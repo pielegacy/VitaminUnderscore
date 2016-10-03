@@ -130,12 +130,22 @@ namespace VitaminUnderscore
                 case "dev_ingredient_add":
                 case "#dia":
                     if (DevMode)
-                        DeveloperDialog.AddIngredient(reg);
+                        if (commandString.Split(' ')[1].ToLower() == "dump")
+                            DeveloperDialog.AddIngredient(reg, true);
+                        else
+                            DeveloperDialog.AddIngredient(reg);
                     break;
                 case "dev_list":
                 case "#dl":
                     DeveloperDialog.MonitorList(reg, commandString.Split(' ')[1].ToLower());
                     break;
+                case "50":
+                case "dev_load":
+                case "#load":
+                    Console.WriteLine("-- File location? --");
+                    string loc = Console.ReadLine();
+                    DeveloperDialog.AddIngredientFromFile(reg, loc);
+                break;
                 case "dev_monitor":
                 case "#dm":
                     DeveloperDialog.MonitorVitals(reg, Int32.Parse(commandString.Split(' ')[1]));
@@ -166,7 +176,8 @@ namespace VitaminUnderscore
             "2) View Formulations",
             "3) Recruit New Subject",
             "4) View Subjects",
-            "5) Run Test",
+            "5) Test Formulation",
+            "50) Load Ingredient From File",
             "99) View This Menu",
             "0) Close Game",
             "100) Save Game",

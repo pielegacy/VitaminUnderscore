@@ -2,6 +2,7 @@ bin
 obj
 SaveData
 SaveDataBackup
+ObjectDumps
 implemenationchecklist.md
 *.docx
 *.txt

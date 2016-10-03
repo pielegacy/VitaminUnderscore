@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace VitaminUnderscore
 {
@@ -44,7 +46,7 @@ namespace VitaminUnderscore
         /*
             Add ingredient to save using dialogs
         */
-        public static void AddIngredient(GameRegistry reg)
+        public static void AddIngredient(GameRegistry reg, bool dump = false)
         {
             Ingredient result = null;
             bool complete = false;
@@ -79,6 +81,13 @@ namespace VitaminUnderscore
             }
             reg.Ingredients.Add(result);
             reg.JsonSave();
+            if (dump)
+            {
+                Directory.CreateDirectory("ObjectDumps");
+                File.WriteAllText($"ObjectDumps/{result.Name}.json", JsonConvert.SerializeObject(result));
+                Console.WriteLine($"{result.Name} dumped to file in ObjectDumps");
+            }
+                
         }
         public static void MonitorList(GameRegistry reg, string type)
         {
@@ -103,6 +112,17 @@ namespace VitaminUnderscore
                 }
                 Console.ReadKey();
             }
+        }
+        public static void AddIngredientFromFile(GameRegistry reg, string location)
+        {
+            Ingredient newIngredient = JsonConvert.DeserializeObject<Ingredient>(File.ReadAllText(location));
+            newIngredient.Effects.ForEach(e => {
+                if (!reg.Effects.Contains(e))
+                    reg.Effects.Add(e);
+            });
+            reg.Ingredients.Add(newIngredient);
+            Console.WriteLine($"{newIngredient.Name} added from file");
+            reg.JsonSave();
         }
         public static void MonitorVitals(GameRegistry reg, int id)
         {
