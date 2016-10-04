@@ -297,31 +297,45 @@ namespace VitaminUnderscore
                 {
                     Console.WriteLine($"{i + 1}) {reg.Subjects[i].Name}");
                 }
-                int indexInt = Convert.ToInt32(Console.ReadLine()); // TODO : Check for errors
-                testee = reg.Subjects[indexInt - 1];
-                Console.WriteLine($"What formulation would you like to test on {testee.Name}?");
-                if (reg.CreatedFormulations.Count > 0)
-                    d = Pickers<Formulation>.ChooseByName(reg.CreatedFormulations);
-                else
+                int indexInt = 0; // TODO : Check for errors
+                try
                 {
-                    d = Dialog.CreateFormulation(reg);
-                    reg.CreatedFormulations.Add(d);
-                    reg.JsonSave();
+                    indexInt = Convert.ToInt32(Console.ReadLine());
+                    if (reg.Subjects[0] != null)
+                        testee = reg.Subjects[indexInt - 1];
                 }
-                Console.Clear();
-                Random rand = new Random();
-                Dialog.ColouredMessage($"-- PATIENT TESTING REPORT BEGIN--\nTesting Instance : {rand.Next(0, 100).GetHashCode()}\nSubject Report :", ConsoleColor.Green);
-                Describe(testee);
-                Dialog.ColouredMessage($"Formulation Report : ", ConsoleColor.Green);
-                Describe(d);
-                if (testee.AssignedFormulation.Name == d.Name)
-                    Dialog.ColouredMessage($"Board Approved : {testee.DrugApproval()}", ConsoleColor.Green);
-                else
-                    Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);
-                complete = Dialog.YesOrNo("Do you agree to this test?");
+                catch (System.Exception)
+                {
+                    Console.WriteLine("Invalid index, using default testee");
+                    if (reg.Subjects[0] != null)
+                        testee = reg.Subjects[0];
+                }
+                if (testee != null)
+                {
+                    Console.WriteLine($"What formulation would you like to test on {testee.Name}?");
+                    if (reg.CreatedFormulations.Count > 0)
+                        d = Pickers<Formulation>.ChooseByName(reg.CreatedFormulations);
+                    else
+                    {
+                        d = Dialog.CreateFormulation(reg);
+                        reg.CreatedFormulations.Add(d);
+                        reg.JsonSave();
+                    }
+                    Console.Clear();
+                    Random rand = new Random();
+                    Dialog.ColouredMessage($"-- PATIENT TESTING REPORT BEGIN--\nTesting Instance : {rand.Next(0, 100).GetHashCode()}\nSubject Report :", ConsoleColor.Green);
+                    Describe(testee);
+                    Dialog.ColouredMessage($"Formulation Report : ", ConsoleColor.Green);
+                    Describe(d);
+                    if (testee.AssignedFormulation.Name == d.Name)
+                        Dialog.ColouredMessage($"Board Approved : {testee.DrugApproval()}", ConsoleColor.Green);
+                    else
+                        Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);
+                    complete = Dialog.YesOrNo("Do you agree to this test?");
+                }
+                testee.Consume(d);
+                Console.ReadKey();
             }
-            testee.Consume(d);
-            Console.ReadKey();
         }
     }
     // TODO : Fix

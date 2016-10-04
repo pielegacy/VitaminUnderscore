@@ -6,13 +6,24 @@ using Newtonsoft.Json;
 
 namespace VitaminUnderscore
 {
-    /*
-        Animal class
-            The base for all species in VitaminUnderscore
-            Anything that is an animal can be tested on
-    */
+    ///<summary>
+    ///Animals are objects which can consume any object
+    ///that inherits IConsumable.
+    ///They have a set of traits with associated values
+    ///which dictate their health and can be easily extended.
+    ///</summary>
     public abstract class Animal : NamedObject
     {
+        ///<param name="age">
+        ///Used to define how well the animal takes consuming a
+        ///a formulation if it is harmful to them.
+        ///</param>
+        ///<param name="attributes">
+        ///Is a dictionary, each key a possible value from the Trait
+        ///enumeration. The integer value is the magnitude of that trait.
+        ///Note that having a negative value for any traits increases a species
+        ///chance of dying from ingestion of bad formulae.`
+        ///</param>
         public Animal(string name, int age, Dictionary<Trait, int> attributes) : base(name)
         {
             _age = age;
@@ -35,19 +46,78 @@ namespace VitaminUnderscore
             get { return _living; }
             set { _living = value; }
         }
-
+        ///<summary>
+        ///Consuming iterates through an animals traits and 
+        ///Applies the associated values to them depending on
+        ///the formulation
+        ///</summary>
+        ///<param name="consumable">
+        ///May be either a single ingredient or a formulation
+        ///</param>
         public virtual void Consume(IConsumable consumable)
         {
-
+            if (consumable.GetType() == typeof(Formulation)) // Handle formulation
+            {
+                Formulation formula = consumable as Formulation;
+                formula.Ingredients.ForEach(i =>
+                {
+                    i.Effects.ForEach(e =>
+                    {
+                        int og = Attributes[e.Trait];
+                        Attributes[e.Trait] = og + e.Amount;
+                        //Console.WriteLine($"{e.Trait} : {og} -> {Attributes[e.Trait]}");
+                    });
+                });
+            }
+            else
+            {
+                Ingredient Ingredient = consumable as Ingredient;
+                Ingredient.Effects.ForEach(e =>
+                {
+                    Attributes[e.Trait] += e.Amount;
+                });
+            }
+            ProcessAttributes();
+        }
+        protected virtual void ProcessAttributes()
+        {
+            Random rand = new Random();
+            int affect = 0;
+            for (int i = 0; i < Attributes.Count; i++)
+            {
+                Trait t = (Trait)i;
+                if (Attributes[t] <= 0)
+                {
+                    Console.WriteLine($"That had a serious impact on {Name}'s {Attributes[t]}");
+                    affect += Attributes[t];
+                }
+            }
+            decimal chance = rand.Next(0, 5) * affect * Math.Floor(Convert.ToDecimal(Age) / rand.Next(1, 11));
+            Console.WriteLine($"{chance}");
+            Living = chance > rand.Next(-120, -90);
         }
     }
-    /*
-        Human class
-            Humans are species which extend animals, they possess a biography and are
-            seen as the more ethical subjects
-    */
+    ///<summary>
+    ///Humans are animals which have a background story (bio)
+    ///and are generally considered more 'ethical' to test on 😉
+    ///</summary>
     public class Human : Animal
     {
+        ///<param name="name">
+        ///The name of the entity
+        ///</param>
+        ///<param name="age">
+        ///The age of the subject, may affect medicine consumption and health
+        ///</param>
+        ///<param name="bio">
+        ///Short description of the subject
+        ///Displayed in their summary
+        ///</param>
+        ///<param name="attributes">
+        ///Attributes are used by the system to
+        ///calculate a subjects weaknesses and such.
+        ///Can be generated using GenerateAttributes()
+        ///</param>
         public Human(string name, int age, string bio, Dictionary<Trait, int> attributes, List<Ingredient> allergies) : base(name, age, attributes)
         {
             _bio = bio;
@@ -122,47 +192,12 @@ namespace VitaminUnderscore
             }
             return res;
         }
-        protected virtual void ProcessAttributes()
-        {
-            Random rand = new Random();
-            int affect = 0;
-            for (int i = 0; i < Attributes.Count; i++)
-            {
-                Trait t = (Trait)i;
-                if (Attributes[t] <= 0)
-                {
-                    Console.WriteLine($"That had a serious impact on {Name}'s {Attributes[t]}");
-                    affect += Attributes[t];
-                }
-            }
-            decimal chance = rand.Next(0, 5) * affect * Math.Floor(Convert.ToDecimal(Age) / rand.Next(1,11));
-            Console.WriteLine($"{chance}");
-            Living = chance > rand.Next(-120, -90);
-        }
     }
 
     ///<summary>
     ///A subject is a human who has been assigned a formulation
     ///and so are more content with taking it
     ///</summary>
-    ///<param name="name">
-    ///The name of the entity
-    ///</param>
-    ///<param name="age">
-    ///The age of the subject, may affect medicine consumption and health
-    ///</param>
-    ///<param name="bio">
-    ///Short description of the subject
-    ///Displayed in their summary
-    ///</param>
-    ///<param name="attributes">
-    ///Attributes are used by the system to
-    ///calculate a subjects weaknesses and such.
-    ///Can be generated using GenerateAttributes()
-    ///</param>
-    ///<param name="drug">
-    ///Their assigned Formulation
-    ///</param>
     public class Subject : Human
     {
         [JsonConstructorAttribute]
@@ -173,6 +208,9 @@ namespace VitaminUnderscore
         public Subject(string name, int age, Formulation drug) : this(name, age, "a poor human", GenerateAttributes(), drug)
         {
         }
+        ///<param name="drug">
+        ///Their assigned Formulation
+        ///</param>
         public Subject(Formulation drug) : this(GetRandomName().Result, GetRandomAge(), "A poor test subject", GenerateAttributes(), drug)
         {
 

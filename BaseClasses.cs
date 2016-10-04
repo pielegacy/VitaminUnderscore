@@ -2,8 +2,16 @@ using System;
 
 namespace VitaminUnderscore
 {
+    ///<summary>
+    ///The base class for all interactable objects in the game
+    ///</summary>
     public class NamedObject
     {
+        ///<param name='name'>
+        ///The publicly accessible, should be unique
+        ///as the game works off the name being
+        ///a 'key' for the NamedObject
+        ///</param>
         public NamedObject(string name)
         {
             _name = name;
