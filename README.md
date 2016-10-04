@@ -1,5 +1,5 @@
 # Vitamin _
-A text-based vitamin creation simulator written in C# using .NET core.
+A text-based vitamin development simulator written in C# using .NET core.
 
 This solution will run on Windows, Mac and a handful of Linux distros and can be compiled
 using the .NET Core ([download here](https://www.microsoft.com/net/core/platform)).
@@ -18,4 +18,13 @@ If you'd just like to build the .dll files use :
 Currently the game includes: 
 - Formulation Creation through combining Vitamins, Minerals and other substances into one.
 - Loading and Saving using an accessible JSON system
-- Basic Testing on subjects
+- Importing of custom save files with new ingredients and such
+- Testing of formulation on subject with possible severe consequences
+- Built in Ingredient builder (`ingredientgenerator.html`) all in one file, no internet required
+    - [Try it now!](jsfiddle.net/o12qpg8t/embedded/result/)
+## Planned Features
+- Mass production of Drugs
+- Resource management system
+- Better documentation
+- Animal varieties as opposed to just humans
+- Basic Manual
