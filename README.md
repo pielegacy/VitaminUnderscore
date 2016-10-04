@@ -22,6 +22,7 @@ Currently the game includes:
 - Testing of formulation on subject with possible severe consequences
 - Built in Ingredient builder (`ingredientgenerator.html`) all in one file, no internet required
     - [Try it now!](jsfiddle.net/o12qpg8t/embedded/result/)
+    
 ## Planned Features
 - Mass production of Drugs
 - Resource management system
