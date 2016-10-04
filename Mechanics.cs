@@ -80,87 +80,91 @@ namespace VitaminUnderscore
             else
                 reg.JsonLoad();
             if (!firstTime)
-            {            
-            HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
-            string commandString = Console.ReadLine();
-            switch (commandString.Split(' ')[0].ToLower())
             {
-                case "1":
-                    reg.CreatedFormulations.Add(CreateFormulation(reg));
-                    reg.JsonSave();
-                    break;
-                case "2":
-                    Console.Clear();
-                    Dialog.ColouredMessage("-- Your Forumalae --", ConsoleColor.Cyan);
-                    reg.CreatedFormulations.ForEach(f => Describe(f));
-                    Console.ReadKey();
-                    break;
-                case "3":
-                    reg.Subjects.Add(CreateSubject(reg));
-                    reg.JsonSave();
-                    break;
-                case "4":
-                    Console.Clear();
-                    Dialog.ColouredMessage("-- Subjects --", ConsoleColor.Yellow);
-                    reg.Subjects.ForEach(s => Describe(s));
-                    Console.ReadKey();
-                    break;
-                case "5":
-                    Dialog.TestSubject(reg);
-                    reg.JsonSave();
-                    break;
-                case "0":
-                    Console.WriteLine("Saving & Shutting down...");
-                    reg.JsonSave();
-                    exit = true;
-                    break;
-                case "100":
-                    Console.WriteLine(reg.CreatedFormulations.Count.ToString());
-                    reg.JsonSave();
-                    break;
-                case "101":
-                    reg.JsonLoad();
-                    break;
-                // Developer Specific Commands
-                case "dev_effect_add":
-                case "#dea":
-                    if (DevMode)
-                        DeveloperDialog.AddEffect(reg);
-                    break;
-                case "dev_ingredient_add":
-                case "#dia":
-                    if (DevMode)
-                        if (commandString.Split(' ')[1].ToLower() == "dump")
-                            DeveloperDialog.AddIngredient(reg, true);
-                        else
-                            DeveloperDialog.AddIngredient(reg);
-                    break;
-                case "dev_list":
-                case "#dl":
-                    DeveloperDialog.MonitorList(reg, commandString.Split(' ')[1].ToLower());
-                    break;
-                case "50":
-                case "dev_load":
-                case "#load":
-                    Console.WriteLine("-- File location? --");
-                    string loc = Console.ReadLine();
-                    DeveloperDialog.AddIngredientFromFile(reg, loc);
-                break;
-                case "51":
-                case "#text":
-                    Console.WriteLine("Paste JSON");
-                    string jsonText = Console.ReadLine();
-                    DeveloperDialog.AddIngredientFromText(reg, jsonText);
-                break;
-                case "dev_monitor":
-                case "#dm":
-                    DeveloperDialog.MonitorVitals(reg, Int32.Parse(commandString.Split(' ')[1]));
-                    break;
-                default:
-                    break;
+                HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
+                string commandString = Console.ReadLine();
+                switch (commandString.Split(' ')[0].ToLower())
+                {
+                    case "custom":
+                        Console.Clear();
+                        LoadCustomCampaign(reg);
+                        break;
+                    case "1":
+                        reg.CreatedFormulations.Add(CreateFormulation(reg));
+                        reg.JsonSave();
+                        break;
+                    case "2":
+                        Console.Clear();
+                        Dialog.ColouredMessage("-- Your Forumalae --", ConsoleColor.Cyan);
+                        reg.CreatedFormulations.ForEach(f => Describe(f));
+                        Console.ReadKey();
+                        break;
+                    case "3":
+                        reg.Subjects.Add(CreateSubject(reg));
+                        reg.JsonSave();
+                        break;
+                    case "4":
+                        Console.Clear();
+                        Dialog.ColouredMessage("-- Subjects --", ConsoleColor.Yellow);
+                        reg.Subjects.ForEach(s => Describe(s));
+                        Console.ReadKey();
+                        break;
+                    case "5":
+                        Dialog.TestSubject(reg);
+                        reg.JsonSave();
+                        break;
+                    case "0":
+                        Console.WriteLine("Saving & Shutting down...");
+                        reg.JsonSave();
+                        exit = true;
+                        break;
+                    case "100":
+                        Console.WriteLine(reg.CreatedFormulations.Count.ToString());
+                        reg.JsonSave();
+                        break;
+                    case "101":
+                        reg.JsonLoad();
+                        break;
+                    // Developer Specific Commands
+                    case "dev_effect_add":
+                    case "#dea":
+                        if (DevMode)
+                            DeveloperDialog.AddEffect(reg);
+                        break;
+                    case "dev_ingredient_add":
+                    case "#dia":
+                        if (DevMode)
+                            if (commandString.Split(' ')[1].ToLower() == "dump")
+                                DeveloperDialog.AddIngredient(reg, true);
+                            else
+                                DeveloperDialog.AddIngredient(reg);
+                        break;
+                    case "dev_list":
+                    case "#dl":
+                        DeveloperDialog.MonitorList(reg, commandString.Split(' ')[1].ToLower());
+                        break;
+                    case "50":
+                    case "dev_load":
+                    case "#load":
+                        Console.WriteLine("-- File location? --");
+                        string loc = Console.ReadLine();
+                        DeveloperDialog.AddIngredientFromFile(reg, loc);
+                        break;
+                    case "51":
+                    case "#text":
+                        Console.WriteLine("Paste JSON");
+                        string jsonText = Console.ReadLine();
+                        DeveloperDialog.AddIngredientFromText(reg, jsonText);
+                        break;
+                    case "dev_monitor":
+                    case "#dm":
+                        DeveloperDialog.MonitorVitals(reg, Int32.Parse(commandString.Split(' ')[1]));
+                        break;
+                    default:
+                        break;
+                }
             }
-            }
-            else 
+            else
             {
                 Console.WriteLine("Welcome to Vitamin _, a vitamin development simulation.\nTo start let's test your typing, type the word vitamin");
                 string initAnswer = Console.ReadLine();
@@ -172,7 +176,7 @@ namespace VitaminUnderscore
                 Console.WriteLine("PERFECT! Let's save your progress, press any key to begin the game.");
                 reg.JsonSave();
                 Console.ReadKey();
-                    
+
             }
             return exit;
         }
@@ -183,13 +187,22 @@ namespace VitaminUnderscore
             "3) Recruit New Subject",
             "4) View Subjects",
             "5) Test Formulation",
-            "50) Load Ingredient From File",
-            "51) Load Ingredient From Text",            
-            "99) View This Menu",
+            //"50) Load Ingredient From File",
+            //"51) Load Ingredient From Text",
             "0) Close Game",
             "100) Save Game",
             "101) Load Game"
         };
+        public static void LoadCustomCampaign(GameRegistry reg)
+        {
+            Console.WriteLine("Please enter the url for an effects.json");
+            string effURL = Console.ReadLine();
+            Console.WriteLine("Please enter the url for an ingredients.json");
+            string ingURL = Console.ReadLine();
+            reg.JsonLoad(false, true, effURL, ingURL);
+            Console.WriteLine("Custom campaign loaded, ensure you run the save command");
+            Console.ReadKey();
+        }
         // Create a formulation from the command line
         public static Formulation CreateFormulation(GameRegistry reg)
         {
@@ -210,10 +223,11 @@ namespace VitaminUnderscore
                     if (currentIngredient != "list")
                     {
                         if (currentIngredient == "")
-                            HelpMessage("--Type the name of the Ingredient to add it to the formulation, type done when you are finished--");
+                            HelpMessage("--Type the name of the Ingredient to add it to the formulation, type list to see ingredients, type done when you are finished--");
                         if (reg.RetIngredient(currentIngredient) != null)
                             ingredients.Add(reg.RetIngredient(currentIngredient));
                         else
+                            if (currentIngredient != "")
                             WarningMessage("Invalid ingredient name, type list to see available ingredients");
                     }
                     else
@@ -236,8 +250,8 @@ namespace VitaminUnderscore
         {
             Console.WriteLine($"{prompt} (y/n)");
             string choice = "";
-                while (choice.ToLower().Split(' ')[0] != "y" && choice.ToLower().Split(' ')[0] != "n")
-                    choice = Console.ReadLine();
+            while (choice.ToLower().Split(' ')[0] != "y" && choice.ToLower().Split(' ')[0] != "n")
+                choice = Console.ReadLine();
             return choice.ToLower().Split(' ')[0] == "y";
         }
         // Add Test Subject
@@ -296,14 +310,14 @@ namespace VitaminUnderscore
                 }
                 Console.Clear();
                 Random rand = new Random();
-                Dialog.ColouredMessage($"-- PATIENT TESTING REPORT BEGIN--\nTesting Instance : {rand.Next(0,100).GetHashCode()}\nSubject Report :", ConsoleColor.Green);
+                Dialog.ColouredMessage($"-- PATIENT TESTING REPORT BEGIN--\nTesting Instance : {rand.Next(0, 100).GetHashCode()}\nSubject Report :", ConsoleColor.Green);
                 Describe(testee);
                 Dialog.ColouredMessage($"Formulation Report : ", ConsoleColor.Green);
                 Describe(d);
                 if (testee.AssignedFormulation.Name == d.Name)
-                    Dialog.ColouredMessage($"Board Approved : {testee.DrugApproval()}", ConsoleColor.Green);        
+                    Dialog.ColouredMessage($"Board Approved : {testee.DrugApproval()}", ConsoleColor.Green);
                 else
-                    Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);                            
+                    Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);
                 complete = Dialog.YesOrNo("Do you agree to this test?");
             }
             testee.Consume(d);

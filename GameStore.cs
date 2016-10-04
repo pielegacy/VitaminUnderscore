@@ -13,8 +13,8 @@ namespace VitaminUnderscore
         /*
             Default Configurations for the JSON files
         */
-        private const string EffectsRepo = @"http://api.myjson.com/bins/2sd7s";
-        private const string IngredientsRepo = @"https://api.myjson.com/bins/4dgrs";
+        private const string EffectsRepo = @"https://api.myjson.com/bins/4nsu8";
+        private const string IngredientsRepo = @"https://api.myjson.com/bins/2c7kw";
         // Every new game is a fresh save
         private const bool newGameDefault = false;
         // Adds individual ingredients
@@ -64,7 +64,7 @@ namespace VitaminUnderscore
             if (Subjects.Count > 0)
                 File.WriteAllText("SaveData/subjects.json", JsonConvert.SerializeObject(Subjects));
         }
-        public async void JsonLoad(bool verbose = false, bool forceDownload = false)
+        public async void JsonLoad(bool verbose = false, bool forceDownload = false, string custEff = "", string custIng = "")
         {
             if (Directory.Exists("SaveData") && !forceDownload)
             {
@@ -82,34 +82,42 @@ namespace VitaminUnderscore
             else // Download default data from the internet if there isn't any 
             {
                 Directory.CreateDirectory("SaveData");
-                List<Effect> downloadedEffects = await DownloadEffects();
+                List<Effect> downloadedEffects = await DownloadEffects(custEff);
                 if (downloadedEffects != null)
                     Effects = downloadedEffects;
-                List<Ingredient> downloadedIngredients = await DownloadIngredients();
+                List<Ingredient> downloadedIngredients = await DownloadIngredients(custIng);
                 if (downloadedIngredients != null)
                     Ingredients = downloadedIngredients;
                 
             }
         }
         // Download JSON for default effects list from the internet
-        static async Task<List<Effect>> DownloadEffects()
+        static async Task<List<Effect>> DownloadEffects(string custEffect = "")
         {
             List<Effect> effectsTemp = null;
+            string url = EffectsRepo;
             using (HttpClient web = new HttpClient())
             {
-                HttpResponseMessage response = await web.GetAsync(EffectsRepo);
+                HttpResponseMessage response;
+                if (custEffect != "")
+                    url = custEffect;
+                response = await web.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                     effectsTemp = JsonConvert.DeserializeObject<List<Effect>>(await response.Content.ReadAsStringAsync());
             };
             return effectsTemp;
         }
         // Do the same for ingredients
-        static async Task<List<Ingredient>> DownloadIngredients()
+        static async Task<List<Ingredient>> DownloadIngredients(string custIng = "")
         {
             List<Ingredient> ingredientsTemp = null;
+            string url = IngredientsRepo;
             using (HttpClient web = new HttpClient())
             {
-                HttpResponseMessage response = await web.GetAsync(IngredientsRepo);
+                HttpResponseMessage response;
+                if (custIng != "")
+                    url = custIng;
+                response = await web.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                     ingredientsTemp = JsonConvert.DeserializeObject<List<Ingredient>>(await response.Content.ReadAsStringAsync());
             }
