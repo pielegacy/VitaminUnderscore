@@ -31,6 +31,7 @@ namespace VitaminUnderscore
         };
         public List<Formulation> CreatedFormulations = new List<Formulation>();
         public List<Subject> Subjects = new List<Subject>();
+        public List<Scientist> Pharmacists = new List<Scientist>();
         public List<Effect> RetEffects(string[] names)
         {
             List<Effect> results = new List<Effect>();

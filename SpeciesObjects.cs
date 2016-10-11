@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -65,7 +66,6 @@ namespace VitaminUnderscore
                     {
                         int og = Attributes[e.Trait];
                         Attributes[e.Trait] = og + e.Amount;
-                        //Console.WriteLine($"{e.Trait} : {og} -> {Attributes[e.Trait]}");
                     });
                 });
             }
@@ -83,6 +83,7 @@ namespace VitaminUnderscore
         {
             Random rand = new Random();
             int affect = 0;
+            File.WriteAllText("testing_output.txt",JsonConvert.SerializeObject(Attributes));
             for (int i = 0; i < Attributes.Count; i++)
             {
                 Trait t = (Trait)i;
@@ -92,8 +93,8 @@ namespace VitaminUnderscore
                     affect += Attributes[t];
                 }
             }
+            File.AppendAllText("testing_output.txt",JsonConvert.SerializeObject(Attributes));            
             decimal chance = rand.Next(0, 5) * affect * Math.Floor(Convert.ToDecimal(Age) / rand.Next(1, 11));
-            Console.WriteLine($"{chance}");
             Living = chance > rand.Next(-120, -90);
         }
     }
@@ -270,6 +271,21 @@ namespace VitaminUnderscore
         {
             Random rand = new Random();
             return rand.Next(18, 100);
+        }
+    }
+    ///<summary>
+    ///A scientist is required for the game to work, without one you lose
+    ///</summary>
+    public class Scientist : Human
+    {
+        public Scientist(string name, int age, bool main = false) : base(name, age)
+        {
+            _isMain = main;
+        }
+        private bool _isMain;
+        public bool MainPharmacist
+        {
+            get { return _isMain;}
         }
     }
 }

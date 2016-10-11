@@ -288,7 +288,7 @@ namespace VitaminUnderscore
         {
             bool complete = false;
             Formulation d = null;
-            Subject testee = null;
+            Animal testee = null;
             while (!complete)
             {
                 Console.Clear();
@@ -302,7 +302,7 @@ namespace VitaminUnderscore
                 {
                     indexInt = Convert.ToInt32(Console.ReadLine());
                     if (reg.Subjects[0] != null)
-                        testee = reg.Subjects[indexInt - 1];
+                        testee = reg.Subjects[indexInt - 1] as Subject;
                 }
                 catch (System.Exception)
                 {
@@ -327,10 +327,15 @@ namespace VitaminUnderscore
                     Describe(testee);
                     Dialog.ColouredMessage($"Formulation Report : ", ConsoleColor.Green);
                     Describe(d);
-                    if (testee.AssignedFormulation.Name == d.Name)
-                        Dialog.ColouredMessage($"Board Approved : {testee.DrugApproval()}", ConsoleColor.Green);
-                    else
-                        Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);
+                    if (testee.GetType() == typeof(Subject))
+                    {
+                        Subject subj = testee as Subject;
+                        if (subj.AssignedFormulation.Name == d.Name)
+                            Dialog.ColouredMessage($"Board Approved : {subj.DrugApproval()}", ConsoleColor.Green);
+                        else
+                            Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);
+                    }
+                        
                     complete = Dialog.YesOrNo("Do you agree to this test?");
                 }
                 testee.Consume(d);

@@ -17,13 +17,16 @@
 [] Consumption
     [x] Simple Attribute Changing
     [x] Works with both Ingredient and Formulation
-    [] Messages Partnered with Consumption
-    [] Subject and Pharmacist Consumption
+    [x] Messages Partnered with Consumption
+    [x] Subject and Pharmacist Consumption
     [] Animal Consumption
-[] Vitamin Creation
-    [] Formulation initialization
-    [] Simple Console Commands for development of formulae
-[] Registry
+[x] Vitamin Creation
+    [x] Formulation initialization
+    [x] Simple Console Commands for development of formulae
+[x] Registry
     [x] Ingredients Has At Least 20 Ingredients
     [x] Effects list
     [] EF Support
+    [x] JSON Loading and Saving
+[] Additional Mechanics
+    [] Death of Main Pharmacist
