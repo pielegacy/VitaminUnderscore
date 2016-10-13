@@ -60,6 +60,7 @@ namespace VitaminUnderscore
                 JsonLoad(false, true);
             File.WriteAllText("SaveData/ingredients.json", JsonConvert.SerializeObject(Ingredients));
             File.WriteAllText("SaveData/effects.json", JsonConvert.SerializeObject(Effects));
+            File.WriteAllText("SaveData/pharmacists.json", JsonConvert.SerializeObject(Pharmacists));            
             if (CreatedFormulations.Count > 0)
                 File.WriteAllText("SaveData/formulations.json", JsonConvert.SerializeObject(CreatedFormulations));
             if (Subjects.Count > 0)
@@ -75,6 +76,8 @@ namespace VitaminUnderscore
                     CreatedFormulations = JsonConvert.DeserializeObject<List<Formulation>>(File.ReadAllText("SaveData/formulations.json"));
                 if (File.Exists("SaveData/subjects.json"))
                     Subjects = JsonConvert.DeserializeObject<List<Subject>>(File.ReadAllText("SaveData/subjects.json"));
+                if (File.Exists("SaveData/pharmacists.json"))
+                    Pharmacists = JsonConvert.DeserializeObject<List<Scientist>>(File.ReadAllText("SaveData/pharmacists.json"));                    
                 if (verbose)
                     Dialog.MessageDone();
                 if (Ingredients.Count == 0 || Effects.Count == 0)

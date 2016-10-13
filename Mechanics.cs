@@ -59,7 +59,12 @@ namespace VitaminUnderscore
             if (obj.GetType() == typeof(Subject))
             {
                 Subject described = obj as Subject;
-                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Age}\nAssigned Formulation : {described.AssignedFormulation.Name}\n");
+                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Biography}\nAssigned Formulation : {described.AssignedFormulation.Name}\n");
+            }
+            if (obj.GetType() == typeof(Scientist))
+            {
+                Scientist described = obj as Scientist;
+                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Biography}\n");
             }
         }
         // Main Menu Dialog Option
@@ -166,6 +171,8 @@ namespace VitaminUnderscore
             }
             else
             {
+                Console.WriteLine("-- No employees detected, running employment tool now --");
+                reg.Pharmacists.Add(Dialog.CreateScientist(true));
                 Console.WriteLine("Welcome to Vitamin _, a vitamin development simulation.\nTo start let's test your typing, type the word vitamin");
                 string initAnswer = Console.ReadLine();
                 while (initAnswer.ToLower() != "vitamin")
@@ -284,6 +291,41 @@ namespace VitaminUnderscore
             }
             return newSubject;
         }
+        public static Scientist CreateScientist(bool isMain = false)
+        {
+            Scientist sci = null;
+            bool done = false;
+            while (!done)
+            {
+                Dialog.ColouredMessage("-- Vitasys Employment System --\nWelcome to the Vitasys Alternative Pharmaceutical Company", ConsoleColor.Cyan);
+                Dialog.ColouredMessage("Please enter you full name:", ConsoleColor.Cyan);
+                string name = Console.ReadLine();
+                while (name == "")
+                {
+                    // What an easter egg tho
+                    Random rand = new Random();
+                    int chance = rand.Next(0, 100);
+                    if (chance > 80)
+                        Dialog.WarningMessage("You have no name? That's cooked as aye");
+                    else
+                        Dialog.WarningMessage("Invalid Name");
+                }
+                Dialog.ColouredMessage("How old are you?:", ConsoleColor.Cyan);
+                string ageString = Console.ReadLine();
+                int age = 0;
+                if (!Int32.TryParse(ageString, out age))
+                {
+                    Console.WriteLine("Oh you think you're smart aye? That's it, you can be a big baby.");
+                    Dialog.ColouredMessage("-- Age set to 3 years old --", ConsoleColor.Green);
+                    age = 3;
+                }
+                sci = new Scientist(name, age);
+                sci.Biography = "A clever person obviously";
+                Dialog.Describe(sci);
+                done = Dialog.YesOrNo();
+            }
+            return sci;
+        }
         public static void TestSubject(GameRegistry reg)
         {
             bool complete = false;
@@ -335,7 +377,7 @@ namespace VitaminUnderscore
                         else
                             Dialog.ColouredMessage($"Warning : Pharmaceutical Board has not approved patient to consume this formulation, proceed with caution", ConsoleColor.Red);
                     }
-                        
+
                     complete = Dialog.YesOrNo("Do you agree to this test?");
                 }
                 testee.Consume(d);
