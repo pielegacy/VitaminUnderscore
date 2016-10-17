@@ -86,87 +86,97 @@ namespace VitaminUnderscore
                 reg.JsonLoad();
             if (!firstTime)
             {
-                HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
-                string commandString = Console.ReadLine();
-                switch (commandString.Split(' ')[0].ToLower())
+                if (reg.Pharmacists.First().Living)
                 {
-                    case "custom":
-                        Console.Clear();
-                        LoadCustomCampaign(reg);
-                        break;
-                    case "1":
-                        reg.CreatedFormulations.Add(CreateFormulation(reg));
-                        reg.JsonSave();
-                        break;
-                    case "2":
-                        Console.Clear();
-                        Dialog.ColouredMessage("-- Your Forumalae --", ConsoleColor.Cyan);
-                        reg.CreatedFormulations.ForEach(f => Describe(f));
-                        Console.ReadKey();
-                        break;
-                    case "3":
-                        reg.Subjects.Add(CreateSubject(reg));
-                        reg.JsonSave();
-                        break;
-                    case "4":
-                        Console.Clear();
-                        Dialog.ColouredMessage("-- Subjects --", ConsoleColor.Yellow);
-                        reg.Subjects.ForEach(s => Describe(s));
-                        Console.ReadKey();
-                        break;
-                    case "5":
-                        Dialog.TestSubject(reg);
-                        reg.JsonSave();
-                        break;
-                    case "0":
-                        Console.WriteLine("Saving & Shutting down...");
-                        reg.JsonSave();
-                        exit = true;
-                        break;
-                    case "100":
-                        Console.WriteLine(reg.CreatedFormulations.Count.ToString());
-                        reg.JsonSave();
-                        break;
-                    case "101":
-                        reg.JsonLoad();
-                        break;
-                    // Developer Specific Commands
-                    case "dev_effect_add":
-                    case "#dea":
-                        if (DevMode)
-                            DeveloperDialog.AddEffect(reg);
-                        break;
-                    case "dev_ingredient_add":
-                    case "#dia":
-                        if (DevMode)
-                            if (commandString.Split(' ')[1].ToLower() == "dump")
-                                DeveloperDialog.AddIngredient(reg, true);
-                            else
-                                DeveloperDialog.AddIngredient(reg);
-                        break;
-                    case "dev_list":
-                    case "#dl":
-                        DeveloperDialog.MonitorList(reg, commandString.Split(' ')[1].ToLower());
-                        break;
-                    case "50":
-                    case "dev_load":
-                    case "#load":
-                        Console.WriteLine("-- File location? --");
-                        string loc = Console.ReadLine();
-                        DeveloperDialog.AddIngredientFromFile(reg, loc);
-                        break;
-                    case "51":
-                    case "#text":
-                        Console.WriteLine("Paste JSON");
-                        string jsonText = Console.ReadLine();
-                        DeveloperDialog.AddIngredientFromText(reg, jsonText);
-                        break;
-                    case "dev_monitor":
-                    case "#dm":
-                        DeveloperDialog.MonitorVitals(reg, Int32.Parse(commandString.Split(' ')[1]));
-                        break;
-                    default:
-                        break;
+                    HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
+                    string commandString = Console.ReadLine();
+                    switch (commandString.Split(' ')[0].ToLower())
+                    {
+                        case "custom":
+                            Console.Clear();
+                            LoadCustomCampaign(reg);
+                            break;
+                        case "1":
+                            reg.CreatedFormulations.Add(CreateFormulation(reg));
+                            reg.JsonSave();
+                            break;
+                        case "2":
+                            Console.Clear();
+                            Dialog.ColouredMessage("-- Your Forumalae --", ConsoleColor.Cyan);
+                            reg.CreatedFormulations.ForEach(f => Describe(f));
+                            Console.ReadKey();
+                            break;
+                        case "3":
+                            reg.Subjects.Add(CreateSubject(reg));
+                            reg.JsonSave();
+                            break;
+                        case "4":
+                            Console.Clear();
+                            Dialog.ColouredMessage("-- Subjects --", ConsoleColor.Yellow);
+                            reg.Subjects.ForEach(s => Describe(s));
+                            Console.ReadKey();
+                            break;
+                        case "5":
+                            Dialog.TestSubject(reg);
+                            reg.JsonSave();
+                            break;
+                        case "0":
+                            Console.WriteLine("Saving & Shutting down...");
+                            reg.JsonSave();
+                            exit = true;
+                            break;
+                        case "100":
+                            Console.WriteLine(reg.CreatedFormulations.Count.ToString());
+                            reg.JsonSave();
+                            break;
+                        case "101":
+                            reg.JsonLoad();
+                            break;
+                        // Developer Specific Commands
+                        case "dev_effect_add":
+                        case "#dea":
+                            if (DevMode)
+                                DeveloperDialog.AddEffect(reg);
+                            break;
+                        case "dev_ingredient_add":
+                        case "#dia":
+                            if (DevMode)
+                                if (commandString.Split(' ').Length > 1 && commandString.Split(' ')[1].ToLower() == "dump")
+                                    DeveloperDialog.AddIngredient(reg, true);
+                                else
+                                    DeveloperDialog.AddIngredient(reg);
+                            break;
+                        case "dev_list":
+                        case "#dl":
+                            DeveloperDialog.MonitorList(reg, commandString.Split(' ')[1].ToLower());
+                            break;
+                        case "50":
+                        case "dev_load":
+                        case "#load":
+                            Console.WriteLine("-- File location? --");
+                            string loc = Console.ReadLine();
+                            DeveloperDialog.AddIngredientFromFile(reg, loc);
+                            break;
+                        case "51":
+                        case "#text":
+                            Console.WriteLine("Paste JSON");
+                            string jsonText = Console.ReadLine();
+                            DeveloperDialog.AddIngredientFromText(reg, jsonText);
+                            break;
+                        case "dev_monitor":
+                        case "#dm":
+                            DeveloperDialog.MonitorVitals(reg, Int32.Parse(commandString.Split(' ')[1]));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    WarningMessage("You died, how unfortunate.\nPress any key to finish your game");
+                    exit = true;
+                    Console.ReadKey();
+                    reg.SaveDataClear();
                 }
             }
             else

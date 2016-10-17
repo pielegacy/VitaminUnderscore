@@ -140,5 +140,18 @@ namespace VitaminUnderscore
             TransferralClass.EffectsToDb(Effects);
             TransferralClass.IngredientsToDb(Ingredients);
         }
+        ///<summary>
+        ///Clear the Save Data of the program
+        ///</summary>
+        public void SaveDataClear()
+        {
+            while (Directory.GetFiles("SaveData").Count() > 1)
+                {
+                Directory.GetFiles("SaveData").ToList().ForEach(f => {
+                    File.Delete("SaveData/"+f);
+                });
+            }
+            Directory.Delete("SaveData");
+        }
     }
 }
