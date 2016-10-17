@@ -334,23 +334,34 @@ namespace VitaminUnderscore
             while (!complete)
             {
                 Console.Clear();
-                ColouredMessage("-- Subject Testing Framework v1.420 --\nPlease select a Subject by index:", ConsoleColor.Yellow);
-                for (int i = 0; i < reg.Subjects.Count; i++)
+                if (reg.Subjects.Count > 0)
                 {
-                    Console.WriteLine($"{i + 1}) {reg.Subjects[i].Name}");
+                    ColouredMessage("-- Subject Testing Framework v1.420 --\nPlease select a Subject by index:", ConsoleColor.Yellow);
+                    for (int i = 0; i < reg.Subjects.Count; i++)
+                    {
+                        Console.WriteLine($"{i + 1}) {reg.Subjects[i].Name}");
+                    }
+                    int indexInt = 0; // TODO : Check for errors
+                    try
+                    {
+                        indexInt = Convert.ToInt32(Console.ReadLine());
+                        if (reg.Subjects[0] != null)
+                            testee = reg.Subjects[indexInt - 1] as Subject;
+                    }
+                    catch (System.Exception)
+                    {
+                        Console.WriteLine("Invalid index, using default testee");
+                        if (reg.Subjects[0] != null)
+                            testee = reg.Subjects[0];
+                    }
                 }
-                int indexInt = 0; // TODO : Check for errors
-                try
+                else
                 {
-                    indexInt = Convert.ToInt32(Console.ReadLine());
-                    if (reg.Subjects[0] != null)
-                        testee = reg.Subjects[indexInt - 1] as Subject;
-                }
-                catch (System.Exception)
-                {
-                    Console.WriteLine("Invalid index, using default testee");
-                    if (reg.Subjects[0] != null)
-                        testee = reg.Subjects[0];
+                    ColouredMessage("Oh, it appears you do not have any subjects available for testing?", ConsoleColor.Cyan);
+                    if (YesOrNo("Would you like to test a formulation on yourself?") == false)
+                        break;
+                    else
+                        testee = reg.Pharmacists[0];
                 }
                 if (testee != null)
                 {
