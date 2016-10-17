@@ -17,6 +17,7 @@ If you'd just like to build the .dll files use :
 ## Features
 Currently the game includes: 
 - Formulation Creation through combining Vitamins, Minerals and other substances into one.
+- You can die if you drop a bad pill, kinda like real life
 - Loading and Saving using an accessible JSON system
 - Importing of custom save files with new ingredients and such
 - Testing of formulation on subject with possible severe consequences

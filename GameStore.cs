@@ -148,7 +148,7 @@ namespace VitaminUnderscore
             while (Directory.GetFiles("SaveData").Count() > 1)
                 {
                 Directory.GetFiles("SaveData").ToList().ForEach(f => {
-                    File.Delete("SaveData/"+f);
+                    File.Delete(f);
                 });
             }
             Directory.Delete("SaveData");
