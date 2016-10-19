@@ -123,15 +123,23 @@ namespace VitaminUnderscore
         {
             _bio = bio;
             _allergies = allergies;
+            GenerateFinances();
         }
-        public Human(string name, int age) : this(name, age, "A human", GenerateAttributes(), new List<Ingredient>())
+        public Human(string name, int age) : this(name, age, "", GenerateAttributes(), new List<Ingredient>())
         {
+            Biography = GenerateBiography();
         }
         private string _bio;
         public string Biography
         {
             get { return _bio; }
             set { _bio = value; }
+        }
+        private double _money;
+        public double Money
+        {
+            get { return _money;}
+            set { _money = value;}
         }
         private readonly List<Ingredient> _allergies;
         public List<Ingredient> Allergies
@@ -145,7 +153,7 @@ namespace VitaminUnderscore
             return !_allergies.Contains(allergy);
         }
         // Generates a random set of attributes
-        public static Dictionary<Trait, int> GenerateAttributes()
+        public static Dictionary<Trait, int> GenerateAttributes(bool moneyInclusive = false)
         {
             Random rand = new Random();
             Dictionary<Trait, int> temp = new Dictionary<Trait, int>();
@@ -155,6 +163,23 @@ namespace VitaminUnderscore
             temp.Add(Trait.Strength, rand.Next(1, 11));
             temp.Add(Trait.Wellbeing, rand.Next(1, 11));
             return temp;
+        }
+        protected void GenerateFinances()
+        {
+            Random rand = new Random();
+            double total = 0.00;
+            for (int i = 0; i < 5; i++)
+            {
+                Trait t = (Trait)i;
+                if (Attributes[t] > 0)
+                    total += rand.Next(1, 4) * Attributes[t];
+            }
+            Money += total;
+        }
+        // Generate Biography based on attributes, TODO : Actually make it work
+        public static string GenerateBiography()
+        {
+            return "Humanly";
         }
         public override void Consume(IConsumable consumable)
         {
@@ -281,6 +306,7 @@ namespace VitaminUnderscore
         public Scientist(string name, int age, bool main = false) : base(name, age)
         {
             _isMain = main;
+            Money = 1000.00;
         }
         private bool _isMain;
         public bool MainPharmacist

@@ -11,7 +11,7 @@
 [x] Human
     [x] Allergies
 [x] Subject
-[] Pharmacist
+[x] Pharmacist
 
 **Mechanics**
 [] Consumption
@@ -26,7 +26,10 @@
 [x] Registry
     [x] Ingredients Has At Least 20 Ingredients
     [x] Effects list
-    [] EF Support
     [x] JSON Loading and Saving
+[] Economy
+    [x] Pharmacist has money
+    [] Pharmacist can get money from dead patients
 [] Additional Mechanics
-    [] Death of Main Pharmacist
+    [x] Death of Main Pharmacist
+    [] Biography generation

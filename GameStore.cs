@@ -20,14 +20,16 @@ namespace VitaminUnderscore
         // Adds individual ingredients
         public GameRegistry()
         {
-            if (newGameDefault && Directory.Exists("SaveData")){
+            if (newGameDefault && Directory.Exists("SaveData"))
+            {
                 List<string> fileNames = Directory.EnumerateFiles("SaveData").ToList();
                 fileNames.ForEach(f => File.Delete(f));
                 Directory.Delete("SaveData");
             }
         }
         public List<Ingredient> Ingredients = new List<Ingredient>();
-        public List<Effect> Effects = new List<Effect>(){
+        public List<Effect> Effects = new List<Effect>()
+        {
         };
         public List<Formulation> CreatedFormulations = new List<Formulation>();
         public List<Subject> Subjects = new List<Subject>();
@@ -60,7 +62,7 @@ namespace VitaminUnderscore
                 JsonLoad(false, true);
             File.WriteAllText("SaveData/ingredients.json", JsonConvert.SerializeObject(Ingredients));
             File.WriteAllText("SaveData/effects.json", JsonConvert.SerializeObject(Effects));
-            File.WriteAllText("SaveData/pharmacists.json", JsonConvert.SerializeObject(Pharmacists));            
+            File.WriteAllText("SaveData/pharmacists.json", JsonConvert.SerializeObject(Pharmacists));
             if (CreatedFormulations.Count > 0)
                 File.WriteAllText("SaveData/formulations.json", JsonConvert.SerializeObject(CreatedFormulations));
             if (Subjects.Count > 0)
@@ -77,7 +79,7 @@ namespace VitaminUnderscore
                 if (File.Exists("SaveData/subjects.json"))
                     Subjects = JsonConvert.DeserializeObject<List<Subject>>(File.ReadAllText("SaveData/subjects.json"));
                 if (File.Exists("SaveData/pharmacists.json"))
-                    Pharmacists = JsonConvert.DeserializeObject<List<Scientist>>(File.ReadAllText("SaveData/pharmacists.json"));                    
+                    Pharmacists = JsonConvert.DeserializeObject<List<Scientist>>(File.ReadAllText("SaveData/pharmacists.json"));
                 if (verbose)
                     Dialog.MessageDone();
                 if (Ingredients.Count == 0 || Effects.Count == 0)
@@ -92,7 +94,7 @@ namespace VitaminUnderscore
                 List<Ingredient> downloadedIngredients = await DownloadIngredients(custIng);
                 if (downloadedIngredients != null)
                     Ingredients = downloadedIngredients;
-                
+
             }
         }
         // Download JSON for default effects list from the internet
@@ -100,15 +102,18 @@ namespace VitaminUnderscore
         {
             List<Effect> effectsTemp = null;
             string url = EffectsRepo;
-            using (HttpClient web = new HttpClient())
+            while (effectsTemp == null)
             {
-                HttpResponseMessage response;
-                if (custEffect != "")
-                    url = custEffect;
-                response = await web.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                    effectsTemp = JsonConvert.DeserializeObject<List<Effect>>(await response.Content.ReadAsStringAsync());
-            };
+                using (HttpClient web = new HttpClient())
+                {
+                    HttpResponseMessage response;
+                    if (custEffect != "")
+                        url = custEffect;
+                    response = await web.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                        effectsTemp = JsonConvert.DeserializeObject<List<Effect>>(await response.Content.ReadAsStringAsync());
+                };
+            }
             return effectsTemp;
         }
         // Do the same for ingredients
@@ -116,14 +121,17 @@ namespace VitaminUnderscore
         {
             List<Ingredient> ingredientsTemp = null;
             string url = IngredientsRepo;
-            using (HttpClient web = new HttpClient())
+            while (ingredientsTemp == null)
             {
-                HttpResponseMessage response;
-                if (custIng != "")
-                    url = custIng;
-                response = await web.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                    ingredientsTemp = JsonConvert.DeserializeObject<List<Ingredient>>(await response.Content.ReadAsStringAsync());
+                using (HttpClient web = new HttpClient())
+                {
+                    HttpResponseMessage response;
+                    if (custIng != "")
+                        url = custIng;
+                    response = await web.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                        ingredientsTemp = JsonConvert.DeserializeObject<List<Ingredient>>(await response.Content.ReadAsStringAsync());
+                }
             }
             return ingredientsTemp;
         }
@@ -146,8 +154,9 @@ namespace VitaminUnderscore
         public void SaveDataClear()
         {
             while (Directory.GetFiles("SaveData").Count() > 1)
+            {
+                Directory.GetFiles("SaveData").ToList().ForEach(f =>
                 {
-                Directory.GetFiles("SaveData").ToList().ForEach(f => {
                     File.Delete(f);
                 });
             }

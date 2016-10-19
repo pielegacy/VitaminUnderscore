@@ -8,7 +8,7 @@ namespace VitaminUnderscore
 {
     /*
     * Dialog Class
-    *   Used for handling in game messages, descriptions and forms
+    *   Used for handling in game messages, descriptions, forms and submissions
     */
     public static class Dialog
     {
@@ -36,6 +36,11 @@ namespace VitaminUnderscore
         {
             ColouredMessage(message, ConsoleColor.Red);
         }
+        // Format double into $00.00
+        public static string Dollar(double money)
+        {
+            return $"${money:F}";
+        }
         // Universal Class used to Describe the games various objects
         public static void Describe(NamedObject obj)
         {
@@ -59,12 +64,12 @@ namespace VitaminUnderscore
             if (obj.GetType() == typeof(Subject))
             {
                 Subject described = obj as Subject;
-                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Biography}\nAssigned Formulation : {described.AssignedFormulation.Name}\n");
+                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nCurrent Wealth : {Dialog.Dollar(described.Money)}\nDescription: {described.Biography}\nAssigned Formulation : {described.AssignedFormulation.Name}\n");
             }
             if (obj.GetType() == typeof(Scientist))
             {
                 Scientist described = obj as Scientist;
-                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nDescription: {described.Biography}\n");
+                Console.WriteLine($"-- {described.Name} --\nAge: {described.Age}\nCurrent Wealth : {Dialog.Dollar(described.Money)}\nDescription: {described.Biography}\n");
             }
         }
         // Main Menu Dialog Option
@@ -204,8 +209,6 @@ namespace VitaminUnderscore
             "3) Recruit New Subject",
             "4) View Subjects",
             "5) Test Formulation",
-            //"50) Load Ingredient From File",
-            //"51) Load Ingredient From Text",
             "0) Close Game",
             "100) Save Game",
             "101) Load Game"
@@ -309,16 +312,15 @@ namespace VitaminUnderscore
             {
                 Dialog.ColouredMessage("-- Vitasys Employment System --\nWelcome to the Vitasys Alternative Pharmaceutical Company", ConsoleColor.Cyan);
                 Dialog.ColouredMessage("Please enter you full name:", ConsoleColor.Cyan);
-                string name = Console.ReadLine();
+                string name = "";
                 while (name == "")
                 {
+                    name = Console.ReadLine();
                     // What an easter egg tho
                     Random rand = new Random();
                     int chance = rand.Next(0, 100);
                     if (chance > 80)
                         Dialog.WarningMessage("You have no name? That's cooked as aye");
-                    else
-                        Dialog.WarningMessage("Invalid Name");
                 }
                 Dialog.ColouredMessage("How old are you?:", ConsoleColor.Cyan);
                 string ageString = Console.ReadLine();
@@ -349,7 +351,8 @@ namespace VitaminUnderscore
                     ColouredMessage("-- Subject Testing Framework v1.420 --\nPlease select a Subject by index:", ConsoleColor.Yellow);
                     for (int i = 0; i < reg.Subjects.Count; i++)
                     {
-                        Console.WriteLine($"{i + 1}) {reg.Subjects[i].Name}");
+                        if (reg.Subjects[i].Living)
+                            Console.WriteLine($"{i + 1}) {reg.Subjects[i].Name}");
                     }
                     int indexInt = 0; // TODO : Check for errors
                     try
@@ -402,6 +405,12 @@ namespace VitaminUnderscore
                     complete = Dialog.YesOrNo("Do you agree to this test?");
                 }
                 testee.Consume(d);
+                if (testee.Living == false && testee.GetType() == typeof(Subject))
+                {
+                    reg.Pharmacists.First().Money += (testee as Subject).Money;
+                    Console.WriteLine($"Oh, looks like {testee.Name} passed away. They left you behind {Dialog.Dollar((testee as Subject).Money)} thought.");
+                    reg.Subjects.Remove(testee as Subject);
+                }
                 Console.ReadKey();
             }
         }
