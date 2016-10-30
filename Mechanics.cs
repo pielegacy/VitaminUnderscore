@@ -80,6 +80,7 @@ namespace VitaminUnderscore
             if (!firstTime)
                 firstTime = Directory.Exists("SaveData") == false;
             ColouredMessage("-- VitaSys Alternative Medicine OS --\nWhat would you like to do today?", ConsoleColor.Yellow);
+            // ColouredMessage($"");
             if (firstTime)
             {
                 Dialog.ColouredMessage("Loading First Time Startup...", ConsoleColor.Cyan);
@@ -91,8 +92,9 @@ namespace VitaminUnderscore
                 reg.JsonLoad();
             if (!firstTime)
             {
-                if (reg.Pharmacists.First().Living)
+                if (reg.Player != null && reg.Player.Living)
                 {
+                    ColouredMessage($"Net Worth : ${reg.Pharmacists.Sum(p => p.Money):0.00}", ConsoleColor.Green);
                     HelpOptions.ForEach(h => Console.WriteLine(h.ToString()));
                     string commandString = Console.ReadLine();
                     switch (commandString.Split(' ')[0].ToLower())
@@ -374,7 +376,7 @@ namespace VitaminUnderscore
                     if (YesOrNo("Would you like to test a formulation on yourself?") == false)
                         break;
                     else
-                        testee = reg.Pharmacists[0];
+                        testee = reg.Player;
                 }
                 if (testee != null)
                 {
@@ -413,6 +415,26 @@ namespace VitaminUnderscore
                 }
                 Console.ReadKey();
             }
+        }
+        public static bool Charge(GameRegistry reg, double amount)
+        {
+            double amt = amount;
+            bool success = amount >= reg.Pharmacists.Sum(p => p.Money);
+            if (success)
+            {
+                List<Scientist> PharmacistOrdered = reg.Pharmacists.OrderBy(p => p.Money).ToList();
+                PharmacistOrdered.ForEach(p =>
+                {
+                    amt -= p.Money;
+                    p.Money = 0;
+                    if (amt < 0)
+                    {
+                        p.Money = amt * -1;
+                        amt = 0;
+                    }
+                });
+            }
+            return success;
         }
     }
     // TODO : Fix

@@ -135,6 +135,14 @@ namespace VitaminUnderscore
             }
             return ingredientsTemp;
         }
+        // Property for Main Player
+        public Scientist Player
+        {
+            get
+            {
+                return Pharmacists[0];
+            }
+        }
         // For use with the entity framework
         public void DatabaseLoad()
         {
