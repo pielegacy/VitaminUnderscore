@@ -170,5 +170,35 @@ namespace VitaminUnderscore
             }
             Directory.Delete("SaveData");
         }
+        public List<string> PositiveDescriptions = new List<string>(){
+            "impeccable",
+            "great",
+            "excellent",
+            "remarkable"
+        };
+        public List<string> NegativeDescriptions = new List<string>()
+        {
+            "terrible",
+            "unhealthly",
+            "shitty",
+            "awful"
+        };
+        public string DescGood
+        {
+            get
+            {
+                Random rand = new Random();
+                return PositiveDescriptions[rand.Next(0, PositiveDescriptions.Count)];
+            }
+        }
+        public string DescBad
+        {
+            get
+            {
+                Random rand = new Random();
+                return NegativeDescriptions[rand.Next(0, NegativeDescriptions.Count)];
+                
+            }
+        }
     }
 }
