@@ -32,4 +32,4 @@
     [] Pharmacist can get money from dead patients
 [] Additional Mechanics
     [x] Death of Main Pharmacist
-    [] Biography generation
+    [x] Biography generation

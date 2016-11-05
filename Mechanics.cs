@@ -314,15 +314,15 @@ namespace VitaminUnderscore
             {
                 Dialog.ColouredMessage("-- Vitasys Employment System --\nWelcome to the Vitasys Alternative Pharmaceutical Company", ConsoleColor.Cyan);
                 Dialog.ColouredMessage("Please enter you full name:", ConsoleColor.Cyan);
-                string name = "";
+                string name = Console.ReadLine();
                 while (name == "")
                 {
-                    name = Console.ReadLine();
                     // What an easter egg tho
                     Random rand = new Random();
                     int chance = rand.Next(0, 100);
                     if (chance > 80)
                         Dialog.WarningMessage("You have no name? That's cooked as aye");
+                    name = Console.ReadLine();
                 }
                 Dialog.ColouredMessage("How old are you?:", ConsoleColor.Cyan);
                 string ageString = Console.ReadLine();
@@ -340,7 +340,7 @@ namespace VitaminUnderscore
             }
             return sci;
         }
-        public static void TestSubject(GameRegistry reg)
+        public static void TestSubject(GameRegistry reg, bool ethical = true)
         {
             bool complete = false;
             Formulation d = null;
@@ -373,10 +373,17 @@ namespace VitaminUnderscore
                 else
                 {
                     ColouredMessage("Oh, it appears you do not have any subjects available for testing?", ConsoleColor.Cyan);
-                    if (YesOrNo("Would you like to test a formulation on yourself?") == false)
-                        break;
+                    if (ethical)
+                        if (YesOrNo("Would you like to test a formulation on yourself?") == false)
+                            break;
+                        else
+                            testee = reg.Player;
                     else
-                        testee = reg.Player;
+                    {
+                        ColouredMessage("Ethics Turned Off : Stealing Subject from Public", ConsoleColor.Red);                        
+                        Random rand = new Random();
+                        testee = new Human("Person from the Street", rand.Next(18, 80));
+                    }
                 }
                 if (testee != null)
                 {
@@ -416,6 +423,10 @@ namespace VitaminUnderscore
                 Console.ReadKey();
             }
         }
+        /// <summary>
+        /// Generate a random animal from the names in the list
+        /// </summary>
+
         public static bool Charge(GameRegistry reg, double amount)
         {
             double amt = amount;
