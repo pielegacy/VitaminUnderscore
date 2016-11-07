@@ -177,7 +177,7 @@ namespace VitaminUnderscore
             }
             Money += total;
         }
-        // Generate Biography based on attributes, TODO : Actually make it work
+        // Generate Biography based on attributes
         public string GenerateBiography()
         {
             Random rand = new Random();
@@ -212,102 +212,102 @@ namespace VitaminUnderscore
                 _res += $"Has {PositiveDescriptions[rand.Next(0, PositiveDescriptions.Count)]} {_greatestTrait} however {NegativeDescriptions[rand.Next(0, NegativeDescriptions.Count)]} {_worstTrait}.";
             return _res;
         }
-    public override void Consume(IConsumable consumable)
-    {
-        if (consumable.GetType() == typeof(Formulation)) // Handle formulation
+        public override void Consume(IConsumable consumable)
         {
-            Formulation formula = consumable as Formulation;
-            formula.Ingredients.ForEach(i =>
+            if (consumable.GetType() == typeof(Formulation)) // Handle formulation
             {
-                AllergicReaction(i);
-                i.Effects.ForEach(e =>
+                Formulation formula = consumable as Formulation;
+                formula.Ingredients.ForEach(i =>
                 {
-                    int og = Attributes[e.Trait];
-                    Attributes[e.Trait] = og + e.Amount;
-                        //Console.WriteLine($"{e.Trait} : {og} -> {Attributes[e.Trait]}");
-                    });
-            });
-        }
-        else
-        {
-            Ingredient Ingredient = consumable as Ingredient;
-            Ingredient.Effects.ForEach(e =>
+                    AllergicReaction(i);
+                    i.Effects.ForEach(e =>
+                    {
+                        int og = Attributes[e.Trait];
+                        Attributes[e.Trait] = og + e.Amount;
+                    //Console.WriteLine($"{e.Trait} : {og} -> {Attributes[e.Trait]}");
+                });
+                });
+            }
+            else
             {
-                Attributes[e.Trait] += e.Amount;
-            });
+                Ingredient Ingredient = consumable as Ingredient;
+                Ingredient.Effects.ForEach(e =>
+                {
+                    Attributes[e.Trait] += e.Amount;
+                });
+            }
+            ProcessAttributes();
         }
-        ProcessAttributes();
-    }
-    // Handle allergies
-    protected virtual bool AllergicReaction(Ingredient substance)
-    {
-        bool res = false;
-        if (Allergies.Contains(substance))
+        // Handle allergies
+        protected virtual bool AllergicReaction(Ingredient substance)
         {
-            Dialog.WarningMessage($"It appears that {Name} is having an allergic reaction to {substance.Name}");
-            res = true;
+            bool res = false;
+            if (Allergies.Contains(substance))
+            {
+                Dialog.WarningMessage($"It appears that {Name} is having an allergic reaction to {substance.Name}");
+                res = true;
+            }
+            return res;
         }
-        return res;
     }
-}
 
-///<summary>
-///A subject is a human who has been assigned a formulation
-///and so are more content with taking it
-///</summary>
-public class Subject : Human
-{
-    [JsonConstructorAttribute]
-    public Subject(string name, int age, string bio, Dictionary<Trait, int> attributes, Formulation drug) : base(name, age, bio, attributes, new List<Ingredient>())
+    ///<summary>
+    ///A subject is a human who has been assigned a formulation
+    ///and so are more content with taking it
+    ///</summary>
+    public class Subject : Human
     {
-        _assignedFormulation = drug;
-        Biography = GenerateBiography();        
-    }
-    public Subject(string name, int age, Formulation drug) : this(name, age, "a poor human", GenerateAttributes(), drug)
-    {
-    }
-    ///<param name="drug">
-    ///Their assigned Formulation
-    ///</param>
-    public Subject(Formulation drug) : this(GetRandomName().Result, GetRandomAge(), "", GenerateAttributes(), drug)
-    {
-    }
-    private List<string> _notes = new List<string>();
-    private void AddNote(string note)
-    {
-        if (!_notes.Contains(note))
-            _notes.Add(note);
-    }
-    private Formulation _assignedFormulation;
-    public Formulation AssignedFormulation
-    {
-        get { return _assignedFormulation; }
-        set { _assignedFormulation = value; }
-    }
-    protected override bool AllergicReaction(Ingredient substance)
-    {
-        bool res = base.AllergicReaction(substance);
-        if (res == true)
-            _notes.Add($"Had a severe reaction to {substance.Name}");
-        return res;
-    }
-    /// <summary>
-    /// Checks to see what the possible harm on the subject would be if they took their
-    /// Prescribed Formulation
-    /// </summary>
-    public bool DrugApproval()
-    {
-        Subject projection = this;
-        projection.Consume(AssignedFormulation);
-        return projection.Attributes[Trait.BrainPower] > 0 && projection.Attributes[Trait.Endurance] > 0 && projection.Attributes[Trait.Immunity] > 0 && projection.Attributes[Trait.Strength] > 0 && projection.Attributes[Trait.Wellbeing] > 0;
-    }
-    // Create a random name using the namey name database
-    // Can't figure out how to get a surname from the database so I chuck
-    // a random suffix on the end
-    static async Task<string> GetRandomName()
-    {
-        Random rand = new Random();
-        List<string> surnameSuffixes = new List<string>()
+        [JsonConstructorAttribute]
+        public Subject(string name, int age, string bio, Dictionary<Trait, int> attributes, Formulation drug) : base(name, age, bio, attributes, new List<Ingredient>())
+        {
+            _assignedFormulation = drug;
+            Biography = GenerateBiography();
+        }
+        public Subject(string name, int age, Formulation drug) : this(name, age, "a poor human", GenerateAttributes(), drug)
+        {
+        }
+        ///<param name="drug">
+        ///Their assigned Formulation
+        ///</param>
+        public Subject(Formulation drug) : this(GetRandomName().Result, GetRandomAge(), "", GenerateAttributes(), drug)
+        {
+        }
+        private List<string> _notes = new List<string>();
+        private void AddNote(string note)
+        {
+            if (!_notes.Contains(note))
+                _notes.Add(note);
+        }
+        private Formulation _assignedFormulation;
+        public Formulation AssignedFormulation
+        {
+            get { return _assignedFormulation; }
+            set { _assignedFormulation = value; }
+        }
+        protected override bool AllergicReaction(Ingredient substance)
+        {
+            bool res = base.AllergicReaction(substance);
+            if (res == true)
+                _notes.Add($"Had a severe reaction to {substance.Name}");
+            return res;
+        }
+        /// <summary>
+        /// Checks to see what the possible harm on the subject would be if they took their
+        /// Prescribed Formulation
+        /// </summary>
+        public bool DrugApproval()
+        {
+            Subject projection = this;
+            projection.Consume(AssignedFormulation);
+            return projection.Attributes[Trait.BrainPower] > 0 && projection.Attributes[Trait.Endurance] > 0 && projection.Attributes[Trait.Immunity] > 0 && projection.Attributes[Trait.Strength] > 0 && projection.Attributes[Trait.Wellbeing] > 0;
+        }
+        // Create a random name using the namey name database
+        // Can't figure out how to get a surname from the database so I chuck
+        // a random suffix on the end
+        static async Task<string> GetRandomName()
+        {
+            Random rand = new Random();
+            List<string> surnameSuffixes = new List<string>()
             {
                 "son",
                 "vic",
@@ -318,31 +318,38 @@ public class Subject : Human
                 "ge",
                 "and"
             };
-        using (HttpClient web = new HttpClient())
+            using (HttpClient web = new HttpClient())
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + " " + JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
+                }
+                catch
+                {
+                    return "Not Connected"+surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
+                }
+            }
+        }
+        static int GetRandomAge()
         {
-            return JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + " " + JsonConvert.DeserializeObject<string[]>(await web.GetStringAsync("http://namey.muffinlabs.com/name.json"))[0] + surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
+            Random rand = new Random();
+            return rand.Next(18, 100);
         }
     }
-    static int GetRandomAge()
+    ///<summary>
+    ///A scientist is required for the game to work, without one you lose
+    ///</summary>
+    public class Scientist : Human
     {
-        Random rand = new Random();
-        return rand.Next(18, 100);
+        public Scientist(string name, int age, bool main = false) : base(name, age)
+        {
+            _isMain = main;
+            Money = 1000.00;
+        }
+        private bool _isMain;
+        public bool MainPharmacist
+        {
+            get { return _isMain; }
+        }
     }
-}
-///<summary>
-///A scientist is required for the game to work, without one you lose
-///</summary>
-public class Scientist : Human
-{
-    public Scientist(string name, int age, bool main = false) : base(name, age)
-    {
-        _isMain = main;
-        Money = 1000.00;
-    }
-    private bool _isMain;
-    public bool MainPharmacist
-    {
-        get { return _isMain; }
-    }
-}
 }

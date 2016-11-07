@@ -6,10 +6,13 @@ using System.Linq;
 
 namespace VitaminUnderscore
 {
-    /*
-    * Dialog Class
-    *   Used for handling in game messages, descriptions, forms and submissions
-    */
+    ///<summary>
+    ///Dialog Class
+    /// Contains definitions for functions that are used by the game for
+    /// - General conversations
+    /// - Major Gameplay Elements
+    // - Presentation functions
+    ///</summary>
     public static class Dialog
     {
         public const bool DevMode = true;
@@ -127,6 +130,14 @@ namespace VitaminUnderscore
                             Dialog.TestSubject(reg);
                             reg.JsonSave();
                             break;
+                        case "6":
+                            if (Dialog.RemoveFormulation(reg))
+                            {
+                                Console.WriteLine("Successfully Removed Forumalae");
+                                reg.JsonSave();
+                                Console.ReadKey();
+                            }
+                            break;
                         case "0":
                             Console.WriteLine("Saving & Shutting down...");
                             reg.JsonSave();
@@ -211,10 +222,17 @@ namespace VitaminUnderscore
             "3) Recruit New Subject",
             "4) View Subjects",
             "5) Test Formulation",
+            "6) Remove Formulation",
             "0) Close Game",
             "100) Save Game",
             "101) Load Game"
         };
+        ///<summary>
+        ///Load Custom game files from internet using a JSON hosting service
+        ///</summary>
+        ///<param name="reg">
+        ///The registry to which the game will save the new campaign data
+        ///</param>
         public static void LoadCustomCampaign(GameRegistry reg)
         {
             Console.WriteLine("Please enter the url for an effects.json");
@@ -239,7 +257,7 @@ namespace VitaminUnderscore
                 string currentIngredient = "";
                 List<Ingredient> ingredients = new List<Ingredient>();
                 HelpMessage("Ingredients?");
-                while (currentIngredient.ToLower() != "done")
+                while (currentIngredient.ToLower() != "done" && ingredients.Count == 0)
                 {
                     currentIngredient = currentIngredient.ToLower();
                     if (currentIngredient != "list")
@@ -250,13 +268,15 @@ namespace VitaminUnderscore
                             ingredients.Add(reg.RetIngredient(currentIngredient));
                         else
                             if (currentIngredient != "")
-                            WarningMessage("Invalid ingredient name, type list to see available ingredients");
+                                WarningMessage("Invalid ingredient name, type list to see available ingredients");
                     }
                     else
                         reg.Ingredients.ForEach(r => Console.WriteLine($"- {r.Name}"));
                     currentIngredient = Console.ReadLine();
                 }
                 string currentType = "";
+                if (ingredients.Count == 0)
+                    Console.WriteLine("Well would you look at that, it's got nothing in it");
                 HelpMessage("Is this a compound of 1) Vitamins 2) Minerals 3) Both ?");
                 while (currentType != "1" && currentType != "2" && currentType != "3")
                     currentType = Console.ReadLine();
@@ -268,13 +288,31 @@ namespace VitaminUnderscore
             }
             return newForm;
         }
+        public static bool RemoveFormulation(GameRegistry reg)
+        {
+            bool result = false;
+            Console.Clear();
+            Dialog.ColouredMessage("-- Official Request for Pharmaceutical Recall --\nCreated Forumalae:", ConsoleColor.Red);
+            Dialog.ColouredMessage("-- Please write the name of the formulation to be recalled --", ConsoleColor.Red);
+            Formulation recalled = Pickers<Formulation>.ChooseByName(reg.CreatedFormulations);
+            Dialog.Describe(recalled);
+            result = Dialog.YesOrNo($"Are you sure you want to remove {recalled.Name} from the market?");
+            if (result)
+            {
+                reg.CreatedFormulations.Remove(recalled);
+            }
+            return result;
+        }
         public static bool YesOrNo(string prompt = "Is this correct?")
         {
             Console.WriteLine($"{prompt} (y/n)");
-            string choice = "";
-            while (choice.ToLower().Split(' ')[0] != "y" && choice.ToLower().Split(' ')[0] != "n")
+            string choice = Console.ReadLine();
+            while (choice.ToLower().ToCharArray()[0] != 'y' && choice.ToLower().ToCharArray()[0] != 'n')
+            {
+                Console.WriteLine("--Please answer Yes or No--");
                 choice = Console.ReadLine();
-            return choice.ToLower().Split(' ')[0] == "y";
+            }
+            return choice.ToLower().ToCharArray()[0] == 'y';
         }
         // Add Test Subject
         public static Subject CreateSubject(GameRegistry reg)
@@ -302,6 +340,8 @@ namespace VitaminUnderscore
                 // Formulation formulation = reg.CreatedFormulations.Find(f => f.Name == form);
                 newSubject = new Subject(formulation);
                 Describe(newSubject);
+                Random rand = new Random();
+                double cost = 300 + (rand.Next(-2, 3) * 10); // Kinda forced 
                 complete = Dialog.YesOrNo();
             }
             return newSubject;
@@ -314,15 +354,15 @@ namespace VitaminUnderscore
             {
                 Dialog.ColouredMessage("-- Vitasys Employment System --\nWelcome to the Vitasys Alternative Pharmaceutical Company", ConsoleColor.Cyan);
                 Dialog.ColouredMessage("Please enter you full name:", ConsoleColor.Cyan);
-                string name = Console.ReadLine();
+                string name = "";
                 while (name == "")
                 {
+                    name = Console.ReadLine();
                     // What an easter egg tho
                     Random rand = new Random();
                     int chance = rand.Next(0, 100);
                     if (chance > 80)
                         Dialog.WarningMessage("You have no name? That's cooked as aye");
-                    name = Console.ReadLine();
                 }
                 Dialog.ColouredMessage("How old are you?:", ConsoleColor.Cyan);
                 string ageString = Console.ReadLine();
@@ -340,7 +380,10 @@ namespace VitaminUnderscore
             }
             return sci;
         }
-        public static void TestSubject(GameRegistry reg, bool ethical = true)
+        ///<summary>
+        /// Display decision dialog for testing subjects
+        ///</summary>
+        public static void TestSubject(GameRegistry reg)
         {
             bool complete = false;
             Formulation d = null;
@@ -356,13 +399,15 @@ namespace VitaminUnderscore
                         if (reg.Subjects[i].Living)
                             Console.WriteLine($"{i + 1}) {reg.Subjects[i].Name}");
                     }
-                    int indexInt = 0; // TODO : Check for errors
+                    int indexInt = 0;
                     try
                     {
                         indexInt = Convert.ToInt32(Console.ReadLine());
                         if (reg.Subjects[0] != null)
                             testee = reg.Subjects[indexInt - 1] as Subject;
                     }
+                    // Invalid index will result in the first testee being used, if
+                    // this is not possible. The main player will be used
                     catch (System.Exception)
                     {
                         Console.WriteLine("Invalid index, using default testee");
@@ -373,17 +418,10 @@ namespace VitaminUnderscore
                 else
                 {
                     ColouredMessage("Oh, it appears you do not have any subjects available for testing?", ConsoleColor.Cyan);
-                    if (ethical)
-                        if (YesOrNo("Would you like to test a formulation on yourself?") == false)
-                            break;
-                        else
-                            testee = reg.Player;
+                    if (YesOrNo("Would you like to test a formulation on yourself?") == false)
+                        break;
                     else
-                    {
-                        ColouredMessage("Ethics Turned Off : Stealing Subject from Public", ConsoleColor.Red);                        
-                        Random rand = new Random();
-                        testee = new Human("Person from the Street", rand.Next(18, 80));
-                    }
+                        testee = reg.Player;
                 }
                 if (testee != null)
                 {
@@ -423,10 +461,6 @@ namespace VitaminUnderscore
                 Console.ReadKey();
             }
         }
-        /// <summary>
-        /// Generate a random animal from the names in the list
-        /// </summary>
-
         public static bool Charge(GameRegistry reg, double amount)
         {
             double amt = amount;
@@ -448,9 +482,9 @@ namespace VitaminUnderscore
             return success;
         }
     }
-    // TODO : Fix
     public static class Pickers<T>
     {
+        // TODO : Fix or remove entirely
         public static int NumberInRange(int min, int max)
         {
             int result = min - 1;

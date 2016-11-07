@@ -23,13 +23,15 @@
 [x] Vitamin Creation
     [x] Formulation initialization
     [x] Simple Console Commands for development of formulae
+    [x] Vitamins can be deleted
 [x] Registry
     [x] Ingredients Has At Least 20 Ingredients
     [x] Effects list
     [x] JSON Loading and Saving
 [] Economy
     [x] Pharmacist has money
-    [] Pharmacist can get money from dead patients
+    [x] Pharmacist can get money from dead patients
+[] Push to a Market
 [] Additional Mechanics
     [x] Death of Main Pharmacist
     [x] Biography generation

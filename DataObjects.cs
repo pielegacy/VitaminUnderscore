@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace VitaminUnderscore
 {
     /*
-        TODO : Fix list of effect data in Ingredients
+        TODO : Remove usage of entity framework
     */
     public class VitaminDb : DbContext
     {
