@@ -144,18 +144,18 @@ namespace VitaminUnderscore
             }
         }
         // For use with the entity framework
-        public void DatabaseLoad()
-        {
-            Effects = TransferralClass.EffectFromDb();
-            Console.WriteLine("Loaded effects");
-            Ingredients = TransferralClass.IngredientsFromDb();
-        }
-        public void DatabaseSave()
-        {
-            Console.WriteLine("Adding...");
-            TransferralClass.EffectsToDb(Effects);
-            TransferralClass.IngredientsToDb(Ingredients);
-        }
+        // public void DatabaseLoad()
+        // {
+        //     Effects = TransferralClass.EffectFromDb();
+        //     Console.WriteLine("Loaded effects");
+        //     Ingredients = TransferralClass.IngredientsFromDb();
+        // }
+        // public void DatabaseSave()
+        // {
+        //     Console.WriteLine("Adding...");
+        //     TransferralClass.EffectsToDb(Effects);
+        //     TransferralClass.IngredientsToDb(Ingredients);
+        // }
         ///<summary>
         ///Clear the Save Data of the program
         ///</summary>

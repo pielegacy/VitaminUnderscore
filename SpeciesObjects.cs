@@ -212,6 +212,12 @@ namespace VitaminUnderscore
                 _res += $"Has {PositiveDescriptions[rand.Next(0, PositiveDescriptions.Count)]} {_greatestTrait} however {NegativeDescriptions[rand.Next(0, NegativeDescriptions.Count)]} {_worstTrait}.";
             return _res;
         }
+        ///<summary>
+        ///Consume is the method which is called whenever an Animal or its children classes
+        ///takes one of the formulae presented. It Can be extended upon for additional functionality
+        ///however its base functionality basically checks for allergies and applies the affects
+        ///of the vitamin.
+        ///</summary>
         public override void Consume(IConsumable consumable)
         {
             if (consumable.GetType() == typeof(Formulation)) // Handle formulation
@@ -224,8 +230,7 @@ namespace VitaminUnderscore
                     {
                         int og = Attributes[e.Trait];
                         Attributes[e.Trait] = og + e.Amount;
-                    //Console.WriteLine($"{e.Trait} : {og} -> {Attributes[e.Trait]}");
-                });
+                    });
                 });
             }
             else
@@ -326,7 +331,7 @@ namespace VitaminUnderscore
                 }
                 catch
                 {
-                    return "Not Connected"+surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
+                    return "Not Connected" + surnameSuffixes[rand.Next(0, surnameSuffixes.Count - 1)];
                 }
             }
         }

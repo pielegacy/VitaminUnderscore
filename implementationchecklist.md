@@ -35,3 +35,4 @@
 [] Additional Mechanics
     [x] Death of Main Pharmacist
     [x] Biography generation
+    [] Check for Connection

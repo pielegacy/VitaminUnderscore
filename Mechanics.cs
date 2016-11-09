@@ -83,7 +83,6 @@ namespace VitaminUnderscore
             if (!firstTime)
                 firstTime = Directory.Exists("SaveData") == false;
             ColouredMessage("-- VitaSys Alternative Medicine OS --\nWhat would you like to do today?", ConsoleColor.Yellow);
-            // ColouredMessage($"");
             if (firstTime)
             {
                 Dialog.ColouredMessage("Loading First Time Startup...", ConsoleColor.Cyan);
@@ -337,11 +336,10 @@ namespace VitaminUnderscore
                     form = Console.ReadLine();
                     formulation = reg.CreatedFormulations.Find(f => f.Name.ToLower() == form.ToLower());
                 }
-                // Formulation formulation = reg.CreatedFormulations.Find(f => f.Name == form);
                 newSubject = new Subject(formulation);
                 Describe(newSubject);
                 Random rand = new Random();
-                double cost = 300 + (rand.Next(-2, 3) * 10); // Kinda forced 
+                double cost = 300 + (rand.Next(-2, 3) * 10); // Kinda forced, could've been a bit more fleshed out 
                 complete = Dialog.YesOrNo();
             }
             return newSubject;
@@ -482,23 +480,15 @@ namespace VitaminUnderscore
             return success;
         }
     }
+    ///<summary>
+    ///Used for isntances when a player has to choose something
+    ///</summary>
     public static class Pickers<T>
     {
-        // TODO : Fix or remove entirely
-        public static int NumberInRange(int min, int max)
-        {
-            int result = min - 1;
-            try
-            {
-                result = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine(result.ToString());
-            }
-            finally
-            {
-                Console.WriteLine($"Must be a numerical value between {min} and {max}");
-            }
-            return result;
-        }
+        ///<summary>
+        ///Provides the necessary dialog and then asks a player
+        ///to an option from the list by its name
+        ///</summary>
         public static T ChooseByName(List<T> options)
         {
             T result = default(T);
@@ -512,6 +502,8 @@ namespace VitaminUnderscore
                     found = options.Where(f => (f as NamedObject).Name.ToLower() == choice.ToLower()).Count() > 0;
                     if (found)
                         result = options.Find(f => (f as NamedObject).Name.ToLower() == choice.ToLower());
+                    else
+                        Dialog.WarningMessage("Invalid Choice, please type the name of your selection");
                 }
             }
             return result;
