@@ -56,7 +56,7 @@ namespace VitaminUnderscore
             if (obj.GetType() == typeof(Formulation))
             {
                 Formulation described = obj as Formulation;
-                Console.WriteLine($"-- {described.Name} --\nType: {described.Type}\nIngredients: ");
+                Console.WriteLine($"-- {described.Name} --\nType: {described.Type}\nDevelopment Cost: ${described.Cost}\nIngredients: ");
                 described.Ingredients.ForEach(i => Console.WriteLine($" - {i.Name}"));
             }
             if (obj.GetType() == typeof(Effect))
@@ -283,7 +283,18 @@ namespace VitaminUnderscore
                 type = (IngredientType)Convert.ToInt16(currentType) - 1;
                 newForm = new Formulation(name, ingredients, type);
                 Describe(newForm);
-                complete = Dialog.YesOrNo();
+                if (newForm.Cost > reg.Player.Money)
+                {
+                    complete = false;
+                    WarningMessage("You do not have enough money to create this formulation");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    complete = Dialog.YesOrNo();
+                    if  (complete)
+                        reg.Player.Money -= newForm.Cost;
+                }
             }
             return newForm;
         }

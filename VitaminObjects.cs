@@ -73,6 +73,20 @@ namespace VitaminUnderscore
         {
             get { return _type;}
         }
+        public double Cost
+        {
+            get {
+                double res = 0.00;
+                _ingredients.ForEach(i => {
+                    double ingCost = 0.00;
+                    i.Effects.ForEach(e => {
+                        ingCost += e.Amount * 5 *  i.Effects.Count;
+                    });
+                    res += ingCost;
+                });
+                return res;
+            }
+        }
         
     }
 }

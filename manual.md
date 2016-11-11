@@ -26,3 +26,4 @@ your own ingredient registry but it may not be "legal" (never stopped me, look a
 ## What Even is a Vitamin?
 
 Good question, although bad wording. Call it a "formulation", as it can have vitamins, minerals and others in it. In fact, quite simply a formulation is a collection
+of Ingredients. We create formulations by combining the ingredients we have been given. The effects of the vitamin depend on these individual ingredients.
