@@ -26,6 +26,8 @@ namespace VitaminUnderscore
                 fileNames.ForEach(f => File.Delete(f));
                 Directory.Delete("SaveData");
             }
+            else if (Directory.Exists("SaveData") && Directory.GetFiles("SaveData").Count() == 0)
+                Directory.Delete("SaveData");
         }
         public List<Ingredient> Ingredients = new List<Ingredient>();
         public List<Effect> Effects = new List<Effect>()
