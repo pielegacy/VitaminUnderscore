@@ -106,7 +106,9 @@ namespace VitaminUnderscore
                             LoadCustomCampaign(reg);
                             break;
                         case "1":
-                            reg.CreatedFormulations.Add(CreateFormulation(reg));
+                            Formulation created = CreateFormulation(reg);
+                            if (created != null)
+                                reg.CreatedFormulations.Add(created);
                             reg.JsonSave();
                             break;
                         case "2":
@@ -285,9 +287,9 @@ namespace VitaminUnderscore
                 Describe(newForm);
                 if (newForm.Cost > reg.Player.Money)
                 {
-                    complete = false;
                     WarningMessage("You do not have enough money to create this formulation");
-                    Console.ReadKey();
+                    newForm = null;
+                    complete = Dialog.YesOrNo("Continue making a formulae?");
                 }
                 else
                 {
@@ -313,6 +315,14 @@ namespace VitaminUnderscore
             }
             return result;
         }
+        // public static double MarketFormulation(GameRegistry reg)
+        // {
+        //     double income = 0.00;
+        //     Dialog.ColouredMessage("-- TPA Alternative Medicine Marketing Program --\nPlease select a formulation to produce:", ConsoleColor.Green);
+        //     Formulation choice = Pickers<Formulation>.ChooseByName(reg.CreatedFormulations);
+            
+        //     return income;
+        // }
         public static bool YesOrNo(string prompt = "Is this correct?")
         {
             Console.WriteLine($"{prompt} (y/n)");
@@ -350,7 +360,6 @@ namespace VitaminUnderscore
                 newSubject = new Subject(formulation);
                 Describe(newSubject);
                 Random rand = new Random();
-                double cost = 300 + (rand.Next(-2, 3) * 10); // Kinda forced, could've been a bit more fleshed out 
                 complete = Dialog.YesOrNo();
             }
             return newSubject;
@@ -397,6 +406,7 @@ namespace VitaminUnderscore
             bool complete = false;
             Formulation d = null;
             Animal testee = null;
+            Random rand = new Random();
             while (!complete)
             {
                 Console.Clear();
@@ -444,7 +454,6 @@ namespace VitaminUnderscore
                         reg.JsonSave();
                     }
                     Console.Clear();
-                    Random rand = new Random();
                     Dialog.ColouredMessage($"-- PATIENT TESTING REPORT BEGIN--\nTesting Instance : {rand.Next(0, 100).GetHashCode()}\nSubject Report :", ConsoleColor.Green);
                     Describe(testee);
                     Dialog.ColouredMessage($"Formulation Report : ", ConsoleColor.Green);
@@ -467,9 +476,18 @@ namespace VitaminUnderscore
                     Console.WriteLine($"Oh, looks like {testee.Name} passed away. They left you behind {Dialog.Dollar((testee as Subject).Money)} thought.");
                     reg.Subjects.Remove(testee as Subject);
                 }
+                else 
+                {
+                    double reward = rand.Next(1, 4) * (testee as Subject).Money;
+                    Dialog.ColouredMessage("Testing successful, the Board has taken note of this success and supplied you a cut of ${reward} for your efforts", ConsoleColor.Green);
+                    reg.Player.Money += reward;
+                }
                 Console.ReadKey();
             }
         }
+        ///<summary>
+        /// Charge all Pharmacists for a purchase
+        ///</summary>
         public static bool Charge(GameRegistry reg, double amount)
         {
             double amt = amount;
