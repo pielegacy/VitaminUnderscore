@@ -315,14 +315,6 @@ namespace VitaminUnderscore
             }
             return result;
         }
-        // public static double MarketFormulation(GameRegistry reg)
-        // {
-        //     double income = 0.00;
-        //     Dialog.ColouredMessage("-- TPA Alternative Medicine Marketing Program --\nPlease select a formulation to produce:", ConsoleColor.Green);
-        //     Formulation choice = Pickers<Formulation>.ChooseByName(reg.CreatedFormulations);
-            
-        //     return income;
-        // }
         public static bool YesOrNo(string prompt = "Is this correct?")
         {
             Console.WriteLine($"{prompt} (y/n)");
