@@ -269,7 +269,7 @@ namespace VitaminUnderscore
                             ingredients.Add(reg.RetIngredient(currentIngredient));
                         else
                             if (currentIngredient != "")
-                                WarningMessage("Invalid ingredient name, type list to see available ingredients");
+                            WarningMessage("Invalid ingredient name, type list to see available ingredients");
                     }
                     else
                         reg.Ingredients.ForEach(r => Console.WriteLine($"- {r.Name}"));
@@ -294,7 +294,7 @@ namespace VitaminUnderscore
                 else
                 {
                     complete = Dialog.YesOrNo();
-                    if  (complete)
+                    if (complete)
                         reg.Player.Money -= newForm.Cost;
                 }
             }
@@ -461,18 +461,26 @@ namespace VitaminUnderscore
 
                     complete = Dialog.YesOrNo("Do you agree to this test?");
                 }
-                testee.Consume(d);
-                if (testee.Living == false && testee.GetType() == typeof(Subject))
+                if (complete && testee != null && d != null)
                 {
-                    reg.Pharmacists.First().Money += (testee as Subject).Money;
-                    Console.WriteLine($"Oh, looks like {testee.Name} passed away. They left you behind {Dialog.Dollar((testee as Subject).Money)} thought.");
-                    reg.Subjects.Remove(testee as Subject);
-                }
-                else 
-                {
-                    double reward = rand.Next(1, 4) * (testee as Subject).Money;
-                    Dialog.ColouredMessage($"Testing successful, the Board has taken note of this success and supplied you a cut of ${reward} for your efforts", ConsoleColor.Green);
-                    reg.Player.Money += reward;
+                    testee.Consume(d);
+                    if (testee.Living == false && testee.GetType() == typeof(Subject))
+                    {
+                        reg.Pharmacists.First().Money += (testee as Subject).Money;
+                        Console.WriteLine($"Oh, looks like {testee.Name} passed away. They left you behind {Dialog.Dollar((testee as Subject).Money)} thought.");
+                        reg.Subjects.Remove(testee as Subject);
+                    }
+                    else
+                    {
+                        if (testee.GetType() == typeof(Subject))
+                        {
+                        double reward = rand.Next(1, 4) * (testee as Subject).Money;
+                        Dialog.ColouredMessage($"Testing successful, the Board has taken note of this success and supplied you a cut of ${reward} for your efforts", ConsoleColor.Green);
+                        reg.Player.Money += reward;
+                        }
+                        else
+                            Dialog.ColouredMessage($"Testing successful", ConsoleColor.Green);
+                    }
                 }
                 Console.ReadKey();
             }
