@@ -471,7 +471,7 @@ namespace VitaminUnderscore
                 else 
                 {
                     double reward = rand.Next(1, 4) * (testee as Subject).Money;
-                    Dialog.ColouredMessage("Testing successful, the Board has taken note of this success and supplied you a cut of ${reward} for your efforts", ConsoleColor.Green);
+                    Dialog.ColouredMessage($"Testing successful, the Board has taken note of this success and supplied you a cut of ${reward} for your efforts", ConsoleColor.Green);
                     reg.Player.Money += reward;
                 }
                 Console.ReadKey();
