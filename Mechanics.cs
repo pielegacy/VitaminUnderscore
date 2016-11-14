@@ -258,7 +258,7 @@ namespace VitaminUnderscore
                 string currentIngredient = "";
                 List<Ingredient> ingredients = new List<Ingredient>();
                 HelpMessage("Ingredients?");
-                while (currentIngredient.ToLower() != "done" && ingredients.Count == 0)
+                while (currentIngredient.ToLower() != "done")
                 {
                     currentIngredient = currentIngredient.ToLower();
                     if (currentIngredient != "list")
