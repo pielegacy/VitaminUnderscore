@@ -364,15 +364,15 @@ namespace VitaminUnderscore
             {
                 Dialog.ColouredMessage("-- Vitasys Employment System --\nWelcome to the Vitasys Alternative Pharmaceutical Company", ConsoleColor.Cyan);
                 Dialog.ColouredMessage("Please enter you full name:", ConsoleColor.Cyan);
-                string name = "";
+                string name = Console.ReadLine();
                 while (name == "")
                 {
-                    name = Console.ReadLine();
                     // What an easter egg tho
                     Random rand = new Random();
                     int chance = rand.Next(0, 100);
                     if (chance > 80)
                         Dialog.WarningMessage("You have no name? That's cooked as aye");
+                    name = Console.ReadLine();
                 }
                 Dialog.ColouredMessage("How old are you?:", ConsoleColor.Cyan);
                 string ageString = Console.ReadLine();
